@@ -2,11 +2,11 @@
 #define IMAGE_PUBLISHER_
 
 #include <ros/ros.h>
+#include <ros/package.h>
 
 #include <image_transport/image_transport.h>
 #include <opencv2/imgcodecs.hpp>
 #include <cv_bridge/cv_bridge.h>
-
 #include <sensor_msgs/image_encodings.h>
 
 class ImagePublisher
@@ -29,18 +29,48 @@ class ImagePublisher
 
     // std
     std::string publishTopic;
+    std::string nodeName;
 
   protected:
+    /*
+    *   allow calling roscpp functions
+    */
+    void initializeRos (std::string name)
+    {
+      int argc = 0;
+      char ** argv = nullptr;
+
+      ros::init (argc, argv, name);
+    }
+
+    /*
+    *   find the image path given the image file name
+    */
+    std::string getImagePath (std::string fileName)
+    {
+      // std
+      std::string packagePath;
+      std::string imagePath;
+
+      // get the path to image given desired expression
+      packagePath = ros::package::getPath ("face_image");
+      imagePath = packagePath + "/images/" + fileName + ".jpg";
+
+      ROS_DEBUG_STREAM ("path to image: " + imagePath);
+
+      return imagePath;
+    }
 
   public:
     /*
     *   publish an image from a specified path
     *   https://answers.ros.org/question/99831/publish-file-to-image-topic/?answer=129176#post-id-129176
     */
-    void publishImage (int argc, char ** argv, std::string imagePath)
+    void publishImage (std::string imageName)
     {
-      // create node named imagePublisher
-      ros::init (argc, argv, "imagePublisher");
+      nodeName = "ImagePublisher";
+
+      initializeRos (nodeName);
       ros::NodeHandle imageNode;
 
       // image transport constructor implicit call doesnt work
@@ -49,20 +79,21 @@ class ImagePublisher
       // the topic that quori's projector is subscribed to
       publishTopic = "/quori/face/image";
 
-      // load image from specified path. bgr8 encoding is best for quori's projector
-      imageReader.image = cv::imread (imagePath, cv::IMREAD_COLOR);
+      // load image from specified path. bgr8 encoding of a full color 1280x720 image is best for quori's projector
+      imageReader.image = cv::imread (getImagePath (imageName), cv::IMREAD_COLOR);
       imageReader.encoding = "bgr8";
       imageReader.toImageMsg (rosImage);
 
-      rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1);
-      ros::Rate loopRate (5);
+      rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1, true);
 
-      while (imageNode.ok ())
+      // https://get-help.robotigniteacademy.com/t/how-to-publish-once-only-one-message-into-a-topic-and-get-it-to-work/346
+      while (rosPublisher.getNumSubscribers () < 1)
       {
-        // publish image then shutdown publisher
-        rosPublisher.publish (rosImage);
-        loopRate.sleep ();
+        ROS_DEBUG ("waiting for subscriber");
       }
+
+      // publish image to topic
+      rosPublisher.publish (rosImage);
     }
 };
 

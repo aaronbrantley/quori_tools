@@ -1,6 +1,6 @@
 #include "ImagePublisher.h"
 
-int main (int argc, char ** argv)
+int main ()
 {
   // classes
   ImagePublisher projectorPublisher;

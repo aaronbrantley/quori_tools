@@ -9,17 +9,14 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 
+/*
+*   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
+*/
 class ImagePublisher
 {
-  /*
-  *   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
-  */
   private:
     // ros
     ros::Publisher rosPublisher;
-
-    // image transport
-    image_transport::Publisher publisher;
 
     // cv
     cv_bridge::CvImage imageReader;

@@ -84,7 +84,7 @@ class ImagePublisher
 
       rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1, true);
 
-      // https://get-help.robotigniteacademy.com/t/how-to-publish-once-only-one-message-into-a-topic-and-get-it-to-work/346
+      // quori face application does not like latched publishing
       while (imageNode.ok ())
       {
         // publish image to topic

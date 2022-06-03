@@ -27,6 +27,8 @@ class ImagePublisher
     // std
     std::string publishTopic;
     std::string nodeName;
+    // list of image names in images/
+    std::vector <std::string> expressionList = {"grinning_face", "neutral_face", "face_without_mouth", "smiling_face_with_sunglasses", "nerd_face"};
 
   protected:
     /*
@@ -46,16 +48,41 @@ class ImagePublisher
     std::string getImagePath (std::string fileName)
     {
       // std
-      std::string packagePath;
-      std::string imagePath;
+      std::string packagePath = ros::package::getPath ("face_image");
+      std::string imagePath = "";
+
+      if (!checkExpression (fileName))
+      {
+        ROS_ERROR ("invalid expression entered");
+        // set expression to error image
+        fileName = "error";
+      }
 
       // get the path to image given desired expression
-      packagePath = ros::package::getPath ("face_image");
       imagePath = packagePath + "/images/" + fileName + ".jpg";
 
       ROS_DEBUG_STREAM ("path to image: " + imagePath);
 
       return imagePath;
+    }
+
+    /*
+    *   check if expression has an associated jpg
+    */
+    bool checkExpression (std::string expressionName)
+    {
+      // for every string in expressionList
+      for (int index = 0; index < expressionList.size (); index += 1)
+      {
+        // if expression has an associated jpg
+        if (expressionName == expressionList.at (index))
+        {
+          return true;
+        }
+      }
+
+      // if no matching jpg was found
+      return false;
     }
 
   public:

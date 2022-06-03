@@ -6,7 +6,7 @@ int main ()
   ImagePublisher projectorPublisher;
 
   // use the publisher class to publish the image
-  projectorPublisher.publishImage ("neutral");
+  projectorPublisher.publishImage ("neutral_face");
 
   return 0;
 }

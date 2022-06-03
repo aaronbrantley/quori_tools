@@ -136,6 +136,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/face_image_node.cpp)
 add_executable (faceTest src/faceTest.cpp)
+add_executable (expressions src/expressions.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,6 +153,9 @@ add_executable (faceTest src/faceTest.cpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(faceTest
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(expressions
   ${catkin_LIBRARIES}
 )
 

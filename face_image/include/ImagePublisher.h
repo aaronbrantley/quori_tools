@@ -69,6 +69,7 @@ class ImagePublisher
 
       initializeRos (nodeName);
       ros::NodeHandle imageNode;
+      ros::Rate loopRate (5);
 
       // image transport constructor implicit call doesnt work
       image_transport::ImageTransport imageTransport (imageNode);
@@ -84,13 +85,12 @@ class ImagePublisher
       rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1, true);
 
       // https://get-help.robotigniteacademy.com/t/how-to-publish-once-only-one-message-into-a-topic-and-get-it-to-work/346
-      while (rosPublisher.getNumSubscribers () < 1)
+      while (imageNode.ok ())
       {
-        ROS_DEBUG ("waiting for subscriber");
+        // publish image to topic
+      	rosPublisher.publish (rosImage);
+      	loopRate.sleep ();
       }
-
-      // publish image to topic
-      rosPublisher.publish (rosImage);
     }
 };
 

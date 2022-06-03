@@ -1,4 +1,4 @@
-# quoriTools
+# quori_tools
 programs that will make working with quori easier
 
 ## face_image

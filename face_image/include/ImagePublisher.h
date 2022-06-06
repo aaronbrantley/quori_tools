@@ -1,6 +1,8 @@
 #ifndef IMAGE_PUBLISHER_
 #define IMAGE_PUBLISHER_
 
+#include <dirent.h>
+
 #include <ros/ros.h>
 #include <ros/package.h>
 
@@ -27,8 +29,9 @@ class ImagePublisher
     // std
     std::string publishTopic;
     std::string nodeName;
+    std::string packagePath;
     // list of image names in images/
-    std::vector <std::string> expressionList = {"grinning_face", "neutral_face", "face_without_mouth", "smiling_face_with_sunglasses", "nerd_face"};
+    std::vector <std::string> expressionList;
 
   protected:
     /*
@@ -48,12 +51,16 @@ class ImagePublisher
     std::string getImagePath (std::string fileName)
     {
       // std
-      std::string packagePath = ros::package::getPath ("face_image");
-      std::string imagePath = "";
+      packagePath = ros::package::getPath ("face_image");
+      std::string imagePath;
+
+      getExpressionList ();
 
       if (!checkExpression (fileName))
       {
         ROS_ERROR ("invalid expression entered");
+        printExpressionList ();
+        
         // set expression to error image
         fileName = "error";
       }
@@ -83,6 +90,57 @@ class ImagePublisher
 
       // if no matching jpg was found
       return false;
+    }
+
+    /*
+    *   get a list of valid expressions
+    *   https://stackoverflow.com/a/46105710
+    */
+    void getExpressionList ()
+    {
+      std::string expressionsPath = packagePath + "/images/";
+      char * expressionsPathChar = & expressionsPath [0];
+
+      if (auto directory = opendir (expressionsPathChar))
+      {
+        while (auto entry = readdir (directory))
+        {
+          std::string currentFileName = entry -> d_name;
+
+          // skip entry if name starts with '.'
+          if (currentFileName.at (0) == '.')
+          {
+            continue;
+          }
+
+          for (int index = currentFileName.size () - 1; index > 0; index -= 1)
+          {
+            if (currentFileName.at (index) == '.')
+            {
+              currentFileName.erase (index, currentFileName.size () - 1);
+            }
+          }
+
+          expressionList.push_back (currentFileName);
+        }
+
+        closedir (directory);
+      }
+    }
+
+    /*
+    *   print list of valid expressions
+    */
+    void printExpressionList ()
+    {
+      std::cout << "valid expressions: ";
+
+      for (int index = 0; index < expressionList.size () - 1; index += 1)
+      {
+        std::cout << expressionList.at (index) << ", ";
+      }
+
+      std::cout << expressionList.at (expressionList.size () - 1) << std::endl;
     }
 
   public:
@@ -124,6 +182,7 @@ class ImagePublisher
 
         loopRate.sleep ();
 
+        // shutdown the node since the image has been published
         imageNode.shutdown ();
       }
     }

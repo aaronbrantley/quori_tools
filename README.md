@@ -8,4 +8,4 @@ programs here take jpg files from `images/` and display them on quori's face pro
 displays a neutral expression from `images/neutral_face.jpg` on quori's face.
 
 ### expressions
-displays an image depending on the input expression. right now, `images/` contains faces from twitter's emojis.
+displays an image depending on the input expression. right now, `images/` contains faces from twitter's emojis. if you would like to add your own image, make sure it is a 1280x720 jpg.

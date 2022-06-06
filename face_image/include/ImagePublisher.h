@@ -111,12 +111,20 @@ class ImagePublisher
 
       rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1, true);
 
+      ros::spinOnce ();
+      loopRate.sleep ();
+
       // quori face application does not like latched publishing
       while (imageNode.ok ())
       {
+        ros::spinOnce ();
+
         // publish image to topic
-      	rosPublisher.publish (rosImage);
-      	loopRate.sleep ();
+        rosPublisher.publish (rosImage);
+
+        loopRate.sleep ();
+
+        imageNode.shutdown ();
       }
     }
 };

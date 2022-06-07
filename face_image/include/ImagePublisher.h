@@ -167,23 +167,15 @@ class ImagePublisher
       imageReader.encoding = "bgr8";
       imageReader.toImageMsg (rosImage);
 
-      rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1, true);
-
-      ros::spinOnce ();
-      loopRate.sleep ();
+      rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1);
 
       // quori face application does not like latched publishing
       while (imageNode.ok ())
       {
-        ros::spinOnce ();
-
         // publish image to topic
         rosPublisher.publish (rosImage);
 
         loopRate.sleep ();
-
-        // shutdown the node since the image has been published
-        imageNode.shutdown ();
       }
     }
 };

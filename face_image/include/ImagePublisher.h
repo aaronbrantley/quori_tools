@@ -20,7 +20,7 @@ class ImagePublisher
     // ros
     ros::Publisher rosPublisher;
 
-    // cv
+    // cv_bridge
     cv_bridge::CvImage imageReader;
 
     // sensor_msgs
@@ -30,7 +30,7 @@ class ImagePublisher
     std::string publishTopic;
     std::string nodeName;
     std::string packagePath;
-    // list of image names in images/
+    std::string imagePath;
     std::vector <std::string> expressionList;
 
   protected:
@@ -50,17 +50,17 @@ class ImagePublisher
     */
     std::string getImagePath (std::string fileName)
     {
-      // std
+      // get the path of the package
       packagePath = ros::package::getPath ("face_image");
-      std::string imagePath;
 
       getExpressionList ();
 
       if (!checkExpression (fileName))
       {
         ROS_ERROR ("invalid expression entered");
+        // print out a list of valid expressions
         printExpressionList ();
-        
+
         // set expression to error image
         fileName = "error";
       }
@@ -99,6 +99,7 @@ class ImagePublisher
     void getExpressionList ()
     {
       std::string expressionsPath = packagePath + "/images/";
+      // make a character array for dirent functions
       char * expressionsPathChar = & expressionsPath [0];
 
       if (auto directory = opendir (expressionsPathChar))
@@ -113,6 +114,7 @@ class ImagePublisher
             continue;
           }
 
+          // take out the file extension from the expression name
           for (int index = currentFileName.size () - 1; index > 0; index -= 1)
           {
             if (currentFileName.at (index) == '.')
@@ -146,11 +148,12 @@ class ImagePublisher
   public:
     /*
     *   publish an image from a specified path
+    *   if you call this twice, the older publisher will be shutdown
     *   https://answers.ros.org/question/99831/publish-file-to-image-topic/?answer=129176#post-id-129176
     */
     void publishImage (std::string imageName)
     {
-      nodeName = "ImagePublisher";
+      nodeName = "image_publisher";
 
       initializeRos (nodeName);
       ros::NodeHandle imageNode;

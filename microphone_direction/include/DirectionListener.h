@@ -29,13 +29,16 @@ class DirectionListener
       ros::NodeHandle listenNode;
 
       directionSub = listenNode.subscribe ("/sound_direction", 1, & DirectionListener::directionCallback, this);
-
-      ros::spinOnce ();
     }
 
     void directionCallback (const std_msgs::Int32::ConstPtr & directionMessage)
     {
+      // wait until a connection to publisher
+      while (directionSub.getNumPublishers () < 1);
+    
       direction = directionMessage -> data;
+      
+      ros::shutdown ();
     }
 
   public:
@@ -44,8 +47,8 @@ class DirectionListener
       nodeName = "direction_listener";
 
       initializeRos (nodeName);
-
-      std::cout << "direction of sound: " << direction << std::endl;
+      
+      ros::spin ();
 
       return direction;
     }

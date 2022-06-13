@@ -5,7 +5,7 @@
 
 #include <std_msgs/Int32.h>
 
-// class for getting direction from microphone input
+// class for getting direction from latest microphone input
 class DirectionListener
 {
   private:
@@ -35,9 +35,10 @@ class DirectionListener
     {
       // wait until a connection to publisher
       while (directionSub.getNumPublishers () < 1);
-    
+
       direction = directionMessage -> data;
-      
+
+      // we received the message, begin shutdown
       ros::shutdown ();
     }
 
@@ -47,7 +48,7 @@ class DirectionListener
       nodeName = "direction_listener";
 
       initializeRos (nodeName);
-      
+
       ros::spin ();
 
       return direction;

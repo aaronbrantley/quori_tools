@@ -3,10 +3,10 @@
 int main ()
 {
   //classes
-  DirectionListener microphoneDirection;
+  DirectionListener soundDirection;
 
   // use the DirectionListener class to get the direction of the last sound heard
-  microphoneDirection.getSoundDirection ();
+  soundDirection.getSoundDirection ();
 
   return 0;
 }

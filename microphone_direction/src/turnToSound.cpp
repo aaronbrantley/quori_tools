@@ -18,7 +18,6 @@ int main (int argc, char ** argv)
 
   // primitive
   int currentSoundDirection;
-  double rotation;
 
   while (turnToSoundNode.ok ())
   {
@@ -26,9 +25,7 @@ int main (int argc, char ** argv)
 
     if (currentSoundDirection != 0)
     {
-      rotation = currentSoundDirection * 3.14 / 180;
-
-      ROS_INFO_STREAM ("turning " << rotation << " rads");
+      ROS_INFO_STREAM ("turning " << currentSoundDirection << " degrees");
 
       rotationMessage.linear.x = 0;
       rotationMessage.linear.y = 0;
@@ -36,11 +33,13 @@ int main (int argc, char ** argv)
 
       rotationMessage.angular.x = 0;
       rotationMessage.angular.y = 0;
-      rotationMessage.angular.z = rotation;
+      rotationMessage.angular.z = currentSoundDirection;
 
       turnPublisher.publish (rotationMessage);
       
+      ros::spinOnce ();
       loopRate.sleep ();
+      
       turnToSoundNode.shutdown ();
     }
 

@@ -39,7 +39,8 @@ int main (int argc, char ** argv)
       rotationMessage.angular.z = rotation;
 
       turnPublisher.publish (rotationMessage);
-
+      
+      loopRate.sleep ();
       turnToSoundNode.shutdown ();
     }
 

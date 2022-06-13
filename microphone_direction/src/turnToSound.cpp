@@ -28,6 +28,7 @@ int main (int argc, char ** argv)
     // if a new sound direction is found
     if (currentSoundDirection - subtract != 0)
     {
+      // convert degrees to radians
       rotation = currentSoundDirection * 3.14 / 180;
 
       ROS_INFO_STREAM ("turning " << rotation << " rads");

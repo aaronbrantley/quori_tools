@@ -6,7 +6,7 @@ int main ()
   DirectionListener soundDirection;
 
   // use the DirectionListener class to get the direction of the last sound heard
-  soundDirection.getSoundDirection ();
+  ROS_INFO_STREAM ("sound at " << soundDirection.getSoundDirection () << " degrees");
 
   return 0;
 }

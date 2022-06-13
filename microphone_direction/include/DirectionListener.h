@@ -39,7 +39,7 @@ class DirectionListener
     }
 
   public:
-    double getSoundDirection ()
+    int getSoundDirection ()
     {
       nodeName = "direction_listener";
 

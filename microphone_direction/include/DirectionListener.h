@@ -16,7 +16,7 @@ class DirectionListener
     std::string nodeName;
 
     // primitive
-    int direction;
+    int direction = 0;
 
   protected:
     void initializeRos (std::string name)
@@ -33,13 +33,9 @@ class DirectionListener
 
     void directionCallback (const std_msgs::Int32::ConstPtr & directionMessage)
     {
-      // wait until a connection to publisher
-      while (directionSub.getNumPublishers () < 1);
-
       direction = directionMessage -> data;
 
-      // we received the message, begin shutdown
-      ros::shutdown ();
+      ROS_DEBUG_STREAM ("direction callback value: " << direction);
     }
 
   public:
@@ -49,7 +45,7 @@ class DirectionListener
 
       initializeRos (nodeName);
 
-      ros::spin ();
+      ROS_DEBUG_STREAM ("direction return value: " << direction);
 
       return direction;
     }

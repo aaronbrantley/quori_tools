@@ -10,7 +10,7 @@ int main (int argc, char ** argv)
   // ros
   ros::init (argc, argv, "turn_to_sound");
   ros::NodeHandle turnToSoundNode;
-  ros::Publisher turnPublisher = turnToSoundNode.advertise <geometry_msgs::Twist> ("cmd_vel", 1);
+  ros::Publisher turnPublisher = turnToSoundNode.advertise <geometry_msgs::Twist> ("quori/base_controller/cmd_vel", 1);
   ros::Rate loopRate (1);
 
   //geometry_msgs
@@ -24,17 +24,25 @@ int main (int argc, char ** argv)
   {
     currentSoundDirection = soundDirection.getSoundDirection ();
 
-    rotation = currentSoundDirection * 3.14 / 180;
+    if (currentSoundDirection != 0)
+    {
+      rotation = currentSoundDirection * 3.14 / 180;
 
-    rotationMessage.linear.x = 0;
-    rotationMessage.linear.y = 0;
-    rotationMessage.linear.z = 0;
+      ROS_INFO_STREAM ("turning " << rotation << " rads");
 
-    rotationMessage.angular.x = 0;
-    rotationMessage.angular.y = 0;
-    rotationMessage.angular.z = rotation;
+      rotationMessage.linear.x = 0;
+      rotationMessage.linear.y = 0;
+      rotationMessage.linear.z = 0;
 
-    turnPublisher.publish (rotationMessage);
+      rotationMessage.angular.x = 0;
+      rotationMessage.angular.y = 0;
+      rotationMessage.angular.z = rotation;
+
+      turnPublisher.publish (rotationMessage);
+
+      turnToSoundNode.shutdown ();
+    }
+
     ros::spinOnce ();
     loopRate.sleep ();
   }

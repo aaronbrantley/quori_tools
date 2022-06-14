@@ -2,7 +2,7 @@
 
 #include <geometry_msgs/Twist.h>
 
-void smoothTurn (int degrees, double scale);
+void smoothTurn (int degrees, double time);
 
 int main (int argc, char ** argv)
 {
@@ -11,6 +11,7 @@ int main (int argc, char ** argv)
 
   // primitive
   int currentSoundDirection;
+  int previousSoundDirection = 0;
 
   // ros
   ros::init (argc, argv, "turn_to_sound");
@@ -22,9 +23,11 @@ int main (int argc, char ** argv)
     currentSoundDirection = soundDirection.getSoundDirection ();
 
     // if a new sound direction is found
-    if (currentSoundDirection < -30 || currentSoundDirection > 30)
+    if (currentSoundDirection != previousSoundDirection)
     {
-      smoothTurn (currentSoundDirection, 540 / currentSoundDirection);
+      smoothTurn (currentSoundDirection, 4);
+
+      previousSoundDirection = currentSoundDirection;
     }
 
     ros::spinOnce ();
@@ -34,10 +37,10 @@ int main (int argc, char ** argv)
   return 0;
 }
 
-void smoothTurn (int degrees, double scale)
+void smoothTurn (int degrees, double time)
 {
   // primitive
-  double rotation;
+  double rotation = degrees * 3.1415926 / 180;;
   int rate = 5;
 
   // ros
@@ -48,10 +51,7 @@ void smoothTurn (int degrees, double scale)
   // geometry_msgs
   geometry_msgs::Twist rotationMessage;
 
-  // convert degrees to radians
-  rotation = degrees * 3.1415926 / 180;
-
-  ROS_INFO_STREAM ("turning " << rotation << " rads at " << rotation / scale << " rads/s");
+  ROS_INFO_STREAM ("turning " << rotation << " rads at " << rotation / time << " rads/s...");
 
   // setup cmd_vel message
   rotationMessage.linear.x = 0;
@@ -59,11 +59,11 @@ void smoothTurn (int degrees, double scale)
   rotationMessage.linear.z = 0;
   rotationMessage.angular.x = 0;
   rotationMessage.angular.y = 0;
-  rotationMessage.angular.z = rotation / scale;
+  rotationMessage.angular.z = rotation / time;
 
   double rotationTracker = 0;
 
-  for (int iterations = 0; iterations < rate * scale; iterations += 1)
+  for (int iterations = 0; iterations < rate * time; iterations += 1)
   {
     turnPublisher.publish (rotationMessage);
 
@@ -71,7 +71,7 @@ void smoothTurn (int degrees, double scale)
     {
       rotationTracker += rotationMessage.angular.z;
 
-      ROS_INFO_STREAM ("rotation in progress... " << rotationTracker << " rads rotated total");
+      ROS_INFO_STREAM (rotationTracker << " rads rotated");
     }
 
 

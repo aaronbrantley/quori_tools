@@ -2,7 +2,7 @@
 
 #include <geometry_msgs/Twist.h>
 
-void smoothTurn (int degrees, int scale);
+void smoothTurn (int degrees, double scale);
 
 int main (int argc, char ** argv)
 {
@@ -22,9 +22,9 @@ int main (int argc, char ** argv)
     currentSoundDirection = soundDirection.getSoundDirection ();
 
     // if a new sound direction is found
-    if (currentSoundDirection != 0)
+    if (currentSoundDirection < -30 || currentSoundDirection > 30)
     {
-      smoothTurn (currentSoundDirection, currentSoundDirection / 10);
+      smoothTurn (currentSoundDirection, 540 / currentSoundDirection);
     }
 
     ros::spinOnce ();
@@ -34,7 +34,7 @@ int main (int argc, char ** argv)
   return 0;
 }
 
-void smoothTurn (int degrees, int scale)
+void smoothTurn (int degrees, double scale)
 {
   // primitive
   double rotation;
@@ -49,7 +49,7 @@ void smoothTurn (int degrees, int scale)
   geometry_msgs::Twist rotationMessage;
 
   // convert degrees to radians
-  rotation = degrees * 3.14 / 180;
+  rotation = degrees * 3.1415926 / 180;
 
   ROS_INFO_STREAM ("turning " << rotation << " rads at " << rotation / scale << " rads/s");
 
@@ -61,11 +61,19 @@ void smoothTurn (int degrees, int scale)
   rotationMessage.angular.y = 0;
   rotationMessage.angular.z = rotation / scale;
 
-  for (int iterations = 0; iterations < scale * rate; iterations += 1)
+  double rotationTracker = 0;
+
+  for (int iterations = 0; iterations < rate * scale; iterations += 1)
   {
     turnPublisher.publish (rotationMessage);
 
-    ROS_DEBUG_STREAM ("rotation message published");
+    if (iterations % 5 == 0)
+    {
+      rotationTracker += rotationMessage.angular.z;
+
+      ROS_INFO_STREAM ("rotation in progress... " << rotationTracker << " rads rotated total");
+    }
+
 
     ros::spinOnce ();
     loopRate.sleep ();

@@ -2,6 +2,8 @@
 
 #include <geometry_msgs/Twist.h>
 
+void smoothTurn (int degrees, int scale);
+
 int main (int argc, char ** argv)
 {
   // classes
@@ -9,41 +11,23 @@ int main (int argc, char ** argv)
 
   // ros
   ros::init (argc, argv, "turn_to_sound");
-  ros::NodeHandle turnToSoundNode;
-  ros::Publisher turnPublisher = turnToSoundNode.advertise <geometry_msgs::Twist> ("quori/base_controller/cmd_vel", 1);
+  ros::NodeHandle waitForNewSoundNode;
   ros::Rate loopRate (1);
-
-  //geometry_msgs
-  geometry_msgs::Twist rotationMessage;
 
   // primitive
   int currentSoundDirection;
-  double rotation;
-  int subtract = 0;
+  int difference = 0;
 
-  while (turnToSoundNode.ok ())
+  while (waitForNewSoundNode.ok ())
   {
     currentSoundDirection = soundDirection.getSoundDirection ();
 
     // if a new sound direction is found
-    if (currentSoundDirection - subtract != 0)
+    if (currentSoundDirection - difference != 0)
     {
-      // convert degrees to radians
-      rotation = currentSoundDirection * 3.14 / 180;
+      smoothTurn (currentSoundDirection, 10);
 
-      ROS_INFO_STREAM ("turning " << rotation << " rads");
-
-      rotationMessage.linear.x = 0;
-      rotationMessage.linear.y = 0;
-      rotationMessage.linear.z = 0;
-
-      rotationMessage.angular.x = 0;
-      rotationMessage.angular.y = 0;
-      rotationMessage.angular.z = rotation;
-
-      turnPublisher.publish (rotationMessage);
-
-      subtract = currentSoundDirection;
+      difference = currentSoundDirection;
     }
 
     ros::spinOnce ();
@@ -51,4 +35,41 @@ int main (int argc, char ** argv)
   }
 
   return 0;
+}
+
+void smoothTurn (int degrees, int scale)
+{
+  // ros
+  ros::NodeHandle turnToSoundNode;
+  ros::Rate loopRate (5);
+  ros::Publisher turnPublisher = turnToSoundNode.advertise <geometry_msgs::Twist> ("quori/base_controller/cmd_vel", 1);
+
+  // geometry_msgs
+  geometry_msgs::Twist rotationMessage;
+
+  // primitive
+  double rotation;
+
+  // convert degrees to radians
+  rotation = degrees * 3.14 / 180;
+
+  ROS_INFO_STREAM ("turning " << rotation << " rads at " << rotation / scale << " rads/s");
+
+  // setup cmd_vel message
+  rotationMessage.linear.x = 0;
+  rotationMessage.linear.y = 0;
+  rotationMessage.linear.z = 0;
+  rotationMessage.angular.x = 0;
+  rotationMessage.angular.y = 0;
+  rotationMessage.angular.z = rotation / scale;
+
+  for (int iterations = 0; iterations < scale * 5; iterations += 1)
+  {
+    turnPublisher.publish (rotationMessage);
+
+    ROS_INFO_STREAM ("rotation message published");
+
+    ros::spinOnce ();
+    loopRate.sleep ();
+  }
 }

@@ -11,6 +11,7 @@ int main (int argc, char ** argv)
 
   // primitive
   int currentSoundDirection;
+  int previousSoundDirection = 0;
 
   // ros
   ros::init (argc, argv, "turn_to_sound");
@@ -22,9 +23,11 @@ int main (int argc, char ** argv)
     currentSoundDirection = soundDirection.getSoundDirection ();
 
     // if a new sound direction is found
-    if (std::abs (currentSoundDirection) > 15)
+    if (std::abs (currentSoundDirection - previousSoundDirection) > 15)
     {
       smoothTurn (currentSoundDirection, 4);
+
+      previousSoundDirection = currentSoundDirection;
     }
 
     ros::spinOnce ();

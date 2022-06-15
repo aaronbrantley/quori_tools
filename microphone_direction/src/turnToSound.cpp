@@ -23,7 +23,7 @@ int main (int argc, char ** argv)
     currentSoundDirection = soundDirection.getSoundDirection ();
 
     // if a new sound direction is found
-    if (currentSoundDirection != previousSoundDirection)
+    if (std::abs (currentSoundDirection - previousSoundDirection) > 15)
     {
       smoothTurn (currentSoundDirection, 4);
 

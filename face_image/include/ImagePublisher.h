@@ -130,6 +130,7 @@ class ImagePublisher
 
       // load image from specified path. bgr8 encoding of a full color 1280x720 image is best for quori's projector
       imageReader.image = cv::imread (getImagePath (imageName), cv::IMREAD_COLOR);
+      // might want to change this to rgb8 or rbga8
       imageReader.encoding = "bgr8";
       imageReader.toImageMsg (rosImage);
 

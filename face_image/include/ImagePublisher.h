@@ -29,8 +29,8 @@ class ImagePublisher
     // std
     std::string publishTopic;
     std::string nodeName;
-    std::string packagePath;
-    std::string imagePath;
+    std::string packagePath = ros::package::getPath ("face_image");
+    std::string imagePath = packagePath + "/images/";
     std::vector <std::string> expressionList;
 
   protected:
@@ -39,6 +39,7 @@ class ImagePublisher
     */
     void initializeRos (std::string name)
     {
+      // for init
       int argc = 0;
       char ** argv = nullptr;
 
@@ -50,23 +51,17 @@ class ImagePublisher
     */
     std::string getImagePath (std::string fileName)
     {
-      // get the path of the package
-      packagePath = ros::package::getPath ("face_image");
-
-      getExpressionList ();
-
+      // if input expression has no file
       if (!checkExpression (fileName))
       {
         ROS_ERROR ("invalid expression entered");
-        // print out a list of valid expressions
-        printExpressionList ();
 
         // set expression to error image
         fileName = "error";
       }
 
       // get the path to image given desired expression
-      imagePath = packagePath + "/images/" + fileName + ".jpg";
+      imagePath += fileName + ".png";
 
       ROS_DEBUG_STREAM ("path to image: " + imagePath);
 
@@ -74,30 +69,13 @@ class ImagePublisher
     }
 
     /*
-    *   check if expression has an associated jpg
-    */
-    bool checkExpression (std::string expressionName)
-    {
-      // for every string in expressionList
-      for (int index = 0; index < expressionList.size (); index += 1)
-      {
-        // if expression has an associated jpg
-        if (expressionName == expressionList.at (index))
-        {
-          return true;
-        }
-      }
-
-      // if no matching jpg was found
-      return false;
-    }
-
-    /*
     *   get a list of valid expressions
     *   https://stackoverflow.com/a/46105710
     */
-    void getExpressionList ()
+    void createExpressionList ()
     {
+      expressionList.clear ();
+
       std::string expressionsPath = packagePath + "/images/";
       // make a character array for dirent functions
       char * expressionsPathChar = & expressionsPath [0];
@@ -128,21 +106,6 @@ class ImagePublisher
 
         closedir (directory);
       }
-    }
-
-    /*
-    *   print list of valid expressions
-    */
-    void printExpressionList ()
-    {
-      std::cout << "valid expressions: ";
-
-      for (int index = 0; index < expressionList.size () - 1; index += 1)
-      {
-        std::cout << expressionList.at (index) << ", ";
-      }
-
-      std::cout << expressionList.at (expressionList.size () - 1) << std::endl;
     }
 
   public:
@@ -180,6 +143,45 @@ class ImagePublisher
 
         loopRate.sleep ();
       }
+    }
+
+    /*
+    *   print list of valid expressions
+    *   gets the name of every file in /images/
+    */
+    void printExpressionList ()
+    {
+      createExpressionList ();
+
+      std::cout << "valid expressions: ";
+
+      for (int index = 0; index < expressionList.size () - 1; index += 1)
+      {
+        std::cout << expressionList.at (index) << ", ";
+      }
+
+      std::cout << expressionList.at (expressionList.size () - 1) << std::endl;
+    }
+
+    /*
+    *   check if expression has an associated jpg
+    */
+    bool checkExpression (std::string expressionName)
+    {
+      createExpressionList ();
+
+      // for every string in expressionList
+      for (int index = 0; index < expressionList.size (); index += 1)
+      {
+        // if expression has an associated jpg
+        if (expressionName == expressionList.at (index))
+        {
+          return true;
+        }
+      }
+
+      // if no matching jpg was found
+      return false;
     }
 };
 

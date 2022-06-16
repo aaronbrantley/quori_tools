@@ -22,10 +22,11 @@ int main (int argc, char ** argv)
   {
     currentSoundDirection = soundDirection.getSoundDirection ();
 
-    // if a new sound direction is found
+    // if a new sound direction is found (and more than 15 degrees different from the last sound)
     if (std::abs (currentSoundDirection - previousSoundDirection) > 15)
     {
-      smoothTurn (currentSoundDirection, 4);
+      // 0 degrees is to the right of the robot and mic installation is a bit off center, shift by about 90 degrees for correct turning
+      smoothTurn (currentSoundDirection + 95, 4);
 
       previousSoundDirection = currentSoundDirection;
     }

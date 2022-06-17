@@ -2,7 +2,7 @@
 
 #include <geometry_msgs/Twist.h>
 
-void smoothTurn (int degrees, double time);
+void smoothTurn (int degrees, double seconds);
 
 int main (int argc, char ** argv)
 {
@@ -20,13 +20,13 @@ int main (int argc, char ** argv)
 
   while (waitForNewSoundNode.ok ())
   {
+    // i dont know if sound_direction gives the right angle but i will trust it
     currentSoundDirection = soundDirection.getSoundDirection ();
 
-    // if a new sound direction is found (and more than 15 degrees different from the last sound)
-    if (std::abs (currentSoundDirection - previousSoundDirection) > 15)
+    // if a new sound direction is found (unlikely that two sounds will come from the exact same direction)
+    if (currentSoundDirection != previousSoundDirection)
     {
-      // 0 degrees is to the right of the robot and mic installation is a bit off center, shift by about 90 degrees for correct turning
-      smoothTurn (currentSoundDirection + 95, 4);
+      smoothTurn (currentSoundDirection, 4);
 
       previousSoundDirection = currentSoundDirection;
     }
@@ -38,11 +38,25 @@ int main (int argc, char ** argv)
   return 0;
 }
 
-void smoothTurn (int degrees, double time)
+void smoothTurn (int degrees, double seconds)
 {
+  // sound_direction never gave a value outside of this range, but just in case
+  if (degrees < -180)
+  {
+    ROS_INFO_STREAM ("clamping turn to -180 degrees");
+
+    degrees = -180;
+  }
+  else if (degrees > 180)
+  {
+    ROS_INFO_STREAM ("clamping turn to 180 degrees");
+
+    degrees = 180;
+  }
+
   // primitive
-  double rotation = degrees * 3.1415926 / 180;;
-  int rate = 5;
+  double rotation = degrees * 3.1415926 / 180;
+  int rate = 10;
 
   // ros
   ros::NodeHandle turnToSoundNode;
@@ -52,7 +66,7 @@ void smoothTurn (int degrees, double time)
   // geometry_msgs
   geometry_msgs::Twist rotationMessage;
 
-  ROS_INFO_STREAM ("turning " << rotation << " rads at " << rotation / time << " rads/s...");
+  ROS_INFO_STREAM ("turning " << degrees << " degrees at " << degrees / seconds << " degrees/s...");
 
   // setup cmd_vel message
   rotationMessage.linear.x = 0;
@@ -60,19 +74,23 @@ void smoothTurn (int degrees, double time)
   rotationMessage.linear.z = 0;
   rotationMessage.angular.x = 0;
   rotationMessage.angular.y = 0;
-  rotationMessage.angular.z = rotation / time;
+  // angular velocity
+  rotationMessage.angular.z = rotation / seconds;
 
+  // keep track of rotation progress
   double rotationTracker = 0;
 
-  for (int iterations = 0; iterations < rate * time; iterations += 1)
+  for (int iterations = 0; iterations < rate * seconds; iterations += 1)
   {
+    // send cmd_vel message
     turnPublisher.publish (rotationMessage);
 
-    if (iterations % 5 == 0)
+    // condition is true once every second while turning
+    if (iterations % rate == 0)
     {
-      rotationTracker += rotationMessage.angular.z;
+      rotationTracker += degrees / seconds;
 
-      ROS_INFO_STREAM (rotationTracker << " rads rotated");
+      ROS_INFO_STREAM (rotationTracker << " degrees rotated");
     }
 
 

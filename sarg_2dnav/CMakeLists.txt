@@ -31,9 +31,6 @@ include_directories(
 include ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-add_library(san_local_planner src/san_local_planner.cpp)
-
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide

@@ -18,10 +18,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#   INCLUDE_DIRS include
-#   LIBRARIES face_image
-#   CATKIN_DEPENDS other_catkin_pkg
-#   DEPENDS system_lib
 )
 
 ###########
@@ -38,14 +34,10 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/face_image_node.cpp)
 add_executable (directionTest src/directionTest.cpp)
 add_executable (turnToSound src/turnToSound.cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
 target_link_libraries(directionTest
   ${catkin_LIBRARIES}
 )

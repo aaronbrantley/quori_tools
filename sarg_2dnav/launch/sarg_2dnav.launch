@@ -1,0 +1,32 @@
+<launch>
+  <master auto="start" />
+
+  <!-- use sim time for /clock -->
+  <!-- <param name="use_sim_time" value="true"/> -->
+
+  <!-- set leg detector fixed frame -->
+  <param name="/leg_detector/fixed_frame" value="map"/>
+
+  <!-- choose map -->
+  <!-- <node name="map_edited" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/peb3.yaml"/> -->
+  <!-- <node name="map_edited" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/3rd.yaml"/> -->
+  <!-- <node name="map_edited" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/upper.yaml"/> -->
+  <node name="map_edited" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
+
+  <!--- Run AMCL -->
+  <include file="$(find amcl)/examples/amcl_omni.launch"/>
+
+  <!-- load move_base and configuration -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <!--<param name="controller_frequency" type="int" value="5"/>-->
+
+    <!-- change local planner -->
+    <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/> -->
+    <!-- <param name="base_local_planner" value="san_trajectory_planner/TrajectoryPlannerROS"/> -->
+    <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+
+    <rosparam file="$(find sarg_2dnav)/config/global_costmap_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find sarg_2dnav)/config/local_costmap_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find sarg_2dnav)/config/base_local_planner_params.yaml" command="load"/>
+  </node>
+</launch>

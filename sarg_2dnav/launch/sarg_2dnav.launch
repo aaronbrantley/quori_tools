@@ -14,6 +14,5 @@
   <include file="$(find amcl)/examples/amcl_omni.launch"/>
 
   <!-- load move_base and configuration -->
-  <include file="$(find quori_nav)/launch/move_base.launch"
-
+  <include file="$(find quori_nav)/launch/move_base.launch"/>
 </launch>

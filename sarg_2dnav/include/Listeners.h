@@ -5,7 +5,6 @@
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <people_msgs/People.h>
-//#include <darknet_ros_msgs/BoundingBoxes.h>
 #include <nav_msgs/OccupancyGrid.h>
 
 
@@ -208,68 +207,5 @@ class PeopleListener
     }
 
 };
-
-/*
-*
-*class ObjectListener
-*{
-*   private:
-*   ros::NodeHandle objectNode;
-*   //ROS_DEBUG ("created nodehandle peopleNode");
-*
-*   // subscribe to objects detected by yolo
-*   ros::Subscriber objectSub = objectNode.subscribe ("darknet_ros/bounding_boxes", 100, & ObjectListener::objectCallback, this);
-*   //ROS_DEBUG ("subscribed to people");
-*
-*   // vector to store coordinates of people
-*   std::vector <std::string> objects;
-*
-*   void addObject (std::string object)
-*   {
-*     // add to peopleLocations in push_back in format (x coordinate, y coordinate, reliability)
-*     objects.push_back (object);
-*   }
-*
-*    void objectCallback (const darknet_ros_msgs::BoundingBoxes::ConstPtr & objectMessage)
-*    {
-*      // clear previously stored people locations (since people move)
-*      clearObjects ();
-*
-*      // add in new locations of people
-*      for (int index = 0; index < objectMessage -> bounding_boxes.size (); index += 1)
-*      {
-*        std::string objectType = objectMessage -> bounding_boxes [index].Class;
-*
-*        addObject (objectType);
-*      }
-*    }
-*
-*    void clearObjects ()
-*    {
-*      objects.clear ();
-*    }
-*
-*  public:
-*    std::vector <std::string> getObjects()
-*    {
-*      return objects;
-*    }
-*
-*    bool hasObject (std::string searchObject)
-*    {
-*      for (int index = 0; index < objects.size (); index += 1)
-*      {
-*        if (objects.at (index) == searchObject)
-*        {
-*          //ROS_INFO ("%s found", searchObject);
-*
-*          return true;
-*        }
-*       }
-*      //ROS_INFO ("%s not found", searchObject);
-*      return false;
-*    }
-*};
-*/
 
 #endif

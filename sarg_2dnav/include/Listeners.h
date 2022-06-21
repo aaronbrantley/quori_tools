@@ -7,7 +7,6 @@
 #include <people_msgs/People.h>
 #include <nav_msgs/OccupancyGrid.h>
 
-
 // class for getting amcl pose
 class PoseListener
 {

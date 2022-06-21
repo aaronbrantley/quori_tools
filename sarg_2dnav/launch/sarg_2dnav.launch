@@ -1,17 +1,11 @@
 <launch>
-  <master auto="start" />
-
-  <!-- use sim time for /clock -->
-  <!-- <param name="use_sim_time" value="true"/> -->
+  <master auto="start"/>
 
   <!-- set leg detector fixed frame -->
   <param name="/leg_detector/fixed_frame" value="map"/>
 
   <!-- choose map -->
-  <node name="map_edited" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
-
-  <!--- Run AMCL -->
-  <include file="$(find amcl)/examples/amcl_omni.launch"/>
+  <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
 
   <!-- load move_base and configuration -->
   <include file="$(find quori_nav)/launch/move_base.launch"/>

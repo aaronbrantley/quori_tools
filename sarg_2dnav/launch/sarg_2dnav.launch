@@ -9,7 +9,7 @@
 
   <!-- amcl -->
   <include file="$(find amcl)/examples/amcl_omni.launch">
-    <arg name="base_frame_id" value="quori/base_link"/>
+    <param name="base_frame_id" value="quori/base_link"/>
   </include>
 
   <!-- load move_base and configuration -->

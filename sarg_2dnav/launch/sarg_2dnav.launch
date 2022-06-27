@@ -8,7 +8,9 @@
   <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
 
   <!-- amcl -->
-  <include file="$(find amcl)/examples/amcl_omni.launch"/>
+  <include file="$(find amcl)/examples/amcl_omni.launch">
+    <arg name="base_frame_id" value="quori/base_link"/>
+  </include>
 
   <!-- load move_base and configuration -->
   <include file="$(find quori_nav)/launch/move_base.launch"/>

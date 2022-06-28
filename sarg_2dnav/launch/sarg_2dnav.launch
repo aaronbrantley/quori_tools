@@ -2,7 +2,7 @@
   <master auto="start"/>
 
   <!-- quori_description -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find quori_description)/urdf/quori.xacro'"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find quori_description)/urdf/quori_standalone.xacro'"/>
 
   <!-- load map -->
   <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>

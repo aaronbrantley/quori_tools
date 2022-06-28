@@ -1,17 +1,23 @@
 <launch>
   <master auto="start"/>
 
-  <!-- quori_description -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find quori_description)/urdf/quori_standalone.xacro'"/>
-
-  <!-- load map -->
+  <!-- map -->
   <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
+
+  <!-- rviz -->
+  <include file="$(find quori_launch)/launch/rviz.launch"/>
+
+  <!-- laser -->
+  <include file="$(find quori_launch)/launch/filtered_laser.launch"/>
 
   <!-- amcl -->
   <include file="$(find amcl)/examples/amcl_omni.launch">
     <param name="base_frame_id" value="quori/base_link"/>
   </include>
 
-  <!-- load move_base and configuration -->
+  <!-- move_base -->
   <include file="$(find quori_nav)/launch/move_base.launch"/>
+
+  <!-- controller -->
+  <include file="$(find quori_controller)/launch/quori_control_holo.launch"/>
 </launch>

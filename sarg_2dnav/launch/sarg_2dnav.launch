@@ -5,7 +5,11 @@
   <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
 
   <!-- robot -->
-  <include file="$(find quori_launch)/launch/robot.launch"/>
+  <include file="$(find quori_controller)/launch/quori_control_holo.launch"/>
+  <include file="$(find quori_launch)/launch/filtered_laser.launch"/>
+
+  <!-- transform -->
+  <node name="transform" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 map quori/base_link"/>
 
   <!-- amcl -->
   <include file="$(find amcl)/examples/amcl_omni.launch">
@@ -14,4 +18,7 @@
 
   <!-- move_base -->
   <include file="$(find quori_nav)/launch/move_base.launch"/>
+
+  <!-- teleop -->
+  <include file="$(find quori_teleop)/launch/quori_teleop.launch"/>
 </launch>

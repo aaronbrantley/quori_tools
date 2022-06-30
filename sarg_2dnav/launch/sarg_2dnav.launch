@@ -4,22 +4,17 @@
   <!-- map -->
   <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
 
-  <!-- robot -->
-  <include file="$(find quori_controller)/launch/quori_control_holo.launch"/>
-  <include file="$(find quori_launch)/launch/filtered_laser.launch"/>
+  <!-- move_base -->
+  <include file="$(find quori_nav)/launch/move_base.launch"/>
 
-  <!-- transform -->
-  <node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0.27 0 0.05 0 0 -0.707 0.707 ramsis/base_link_diff laser 50"/>
-  <remap from="tf" to="tf_static"/>
+  <!-- controller -->
+  <include file="$(find quori_controller)/launch/quori_control_holo.launch"/>
+
+  <!-- laser -->
+  <include file="$(find quori_launch)/filtered_laser.launch"/>
 
   <!-- amcl -->
   <include file="$(find amcl)/examples/amcl_omni.launch">
     <param name="base_frame_id" value="quori/base_link"/>
   </include>
-
-  <!-- move_base -->
-  <include file="$(find quori_nav)/launch/move_base.launch"/>
-
-  <!-- teleop -->
-  <include file="$(find quori_teleop)/launch/quori_teleop.launch"/>
 </launch>

@@ -1,20 +1,18 @@
 <launch>
-  <master auto="start"/>
+  <!-- robot -->
+  <include file="$(find quori_launch)/launch/robot.launch"/>
 
-  <!-- map -->
-  <node name="map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
+  <!-- lidar -->
+  <include file="$(find quori_launch)/launch/filtered_laser.launch"/>
 
-  <!-- move_base -->
-  <include file="$(find quori_nav)/launch/move_base.launch"/>
-
-  <!-- controller -->
-  <include file="$(find quori_controller)/launch/quori_control_holo.launch"/>
-
-  <!-- laser -->
-  <include file="$(find quori_launch)/filtered_laser.launch"/>
-
-  <!-- amcl -->
+  <!-- localization -->
   <include file="$(find amcl)/examples/amcl_omni.launch">
     <param name="base_frame_id" value="quori/base_link"/>
   </include>
+
+  <!-- navigation -->
+  <include file="$(find quori_nav)/launch/move_base.launch"/>
+
+  <!-- map -->
+  <node name="lab_map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
 </launch>

@@ -1,6 +1,6 @@
 <launch>
   <!-- map -->
-  <node name="lab_map" pkg="map_server" type="map_server" args="$(find sarg_2dnav)/maps/lab.yaml"/>
+  <node name="lab_map" pkg="map_server" type="map_server" args="$(find base_2dnav)/maps/lab.yaml"/>
 
   <!-- robot -->
   <include file="$(find quori_launch)/launch/robot.launch"/>

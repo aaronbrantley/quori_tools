@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>sarg_2dnav</name>
+  <name>base_2dnav</name>
   <version>0.0.0</version>
-  <description>The sarg_2dnav package</description>
+  <description>The base_2dnav package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/sarg_2dnav</url> -->
+  <!-- <url type="website">http://wiki.ros.org/base_2dnav</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->

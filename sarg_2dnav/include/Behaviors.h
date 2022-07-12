@@ -175,11 +175,9 @@ class Engaging : public Behaviors
 
       int index = peopleLocations.size ();
 
-      do
+      // while there is a person location to test and a valid goal has not been found
+      while (index > 0 && !goalIsOk)
       {
-        // iterate through the people vector backwards (its sorted from least reliable to most)
-        index -= 1;
-
         // forget the previous invalid goal
         potentialGoal.clear ();
 
@@ -189,9 +187,10 @@ class Engaging : public Behaviors
 
         // test the goal
         goalIsOk = checkGoal (currentCoordinates, potentialGoal, 0.5);
+
+        // iterate through the people vector backwards (its sorted from least reliable to most)
+        index -= 1;
       }
-      // while there is a person location to test and a valid goal has not been found
-      while (index > 0 && !goalIsOk);
 
       // if goal between a person has not been found
       if (!goalIsOk)
@@ -199,7 +198,6 @@ class Engaging : public Behaviors
         ROS_INFO ("could not find person to interact with, falling back to wandering");
         srand (time (NULL));
         // wander randomly to convey less serious tone within museum
-        do
         {
           // forget the previous invalid goal
           potentialGoal.clear ();
@@ -242,11 +240,9 @@ class Conservative : public Behaviors
 
       int index = peopleLocations.size ();
 
-      do
+      // while a valid goal has not been found
+      while (index > 0 && !goalIsOk)
       {
-        // iterate through the people vector backwards (its sorted from least reliable to most)
-        index -= 1;
-
         // forget the previous invalid goal
         potentialGoal.clear ();
 
@@ -256,9 +252,10 @@ class Conservative : public Behaviors
 
         // test the goal
         goalIsOk = checkGoal (currentCoordinates, potentialGoal, 1.0);
+
+        // iterate through the people vector backwards (its sorted from least reliable to most)
+        index -= 1;
       }
-      // while a valid goal has not been found
-      while (index > 0 && !goalIsOk);
 
       // if goal has not been found
       if (!goalIsOk)

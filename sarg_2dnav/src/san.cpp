@@ -1,7 +1,3 @@
-#include <move_base_msgs/MoveBaseAction.h>
-#include <actionlib/client/simple_action_client.h>
-#include <nav_msgs/GetPlan.h>
-
 #include "Behaviors.h"
 
 char readRoom (int roomDensity, double roomVulnerability);
@@ -23,9 +19,9 @@ int main (int argc, char ** argv)
   // behavior handling
   Behaviors behavior;
 
-  ros::Rate loop_rate (1);
+  ros::Rate loopRate (1);
   ros::spinOnce ();
-  loop_rate.sleep();
+  loopRate.sleep ();
   // spinOnce has to be called twice before getting correct pose, there's probably a better way to do this
   ros::spinOnce ();
 
@@ -58,7 +54,7 @@ int main (int argc, char ** argv)
 
     // get new information from subscriptions
     ros::spinOnce ();
-    loop_rate.sleep();
+    loopRate.sleep ();
   }
 
   return 0;

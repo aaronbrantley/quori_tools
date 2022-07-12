@@ -13,5 +13,7 @@
 
   <!-- localization -->
   <include file="$(find amcl)/examples/amcl_omni.launch"/>
+
+  <!-- parameters -->
   <param name="amcl/base_frame_id" value="quori/base_link"/>
 </launch>

@@ -1,35 +1,29 @@
 #include "Behaviors.h"
+#include "Listeners.h"
 
 int main (int argc, char ** argv)
 {
-  // initialize node
-  ros::init (argc, argv, "quori_wander");
-  //ROS_DEBUG ("initialized node quori_wander");
-
-  // declare listeners
-  // PoseListener subscribes to amcl_pose topic
+  // classes
   PoseListener currentPose;
-
-  // behavior handling
-  Behaviors behavior;
   Engaging engagingBehavior;
 
+  // ros
+  ros::init (argc, argv, "quori_wander");
+  ros::NodeHandle wanderNode;
   ros::Rate loopRate (1);
-  ros::spinOnce ();
-  loopRate.sleep ();
-  // spinOnce has to be called twice before getting correct pose, there's probably a better way to do this
-  ros::spinOnce ();
 
   // loop until ctrl-c is pressed or ros::shutdown is called
-  while (ros::ok ())
+  while (wanderNode.ok ())
   {
     // whether or not the goal has been reached
     bool goalReached = false;
 
     std::vector <std::vector <double>> emptyList;
 
+    std::vector <double> goal = engagingBehavior.findGoal (currentPose.getPose (), emptyList);
+
     // engaging behavior with no person detection causes wandering
-    goalReached = behavior.goToGoal (engagingBehavior.findGoal (currentPose.getPose (), emptyList));
+    goalReached = engagingBehavior.goToGoal (goal);
 
     if (goalReached)
     {
@@ -44,4 +38,6 @@ int main (int argc, char ** argv)
     ros::spinOnce ();
     loopRate.sleep ();
   }
+
+  return 0;
 }

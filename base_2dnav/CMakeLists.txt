@@ -32,11 +32,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(follow src/follow.cpp)
-add_executable(san src/san.cpp)
 add_executable(quori_wander src/quori_wander.cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(follow ${catkin_LIBRARIES})
-target_link_libraries(san ${catkin_LIBRARIES})
 target_link_libraries(quori_wander ${catkin_LIBRARIES})

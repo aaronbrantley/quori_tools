@@ -7,7 +7,6 @@
 #include <actionlib/client/simple_action_client.h>
 #include <nav_msgs/GetPlan.h>
 
-#include "Listeners.h"
 #include "MovementConfigurator.h"
 
 class Behaviors
@@ -197,7 +196,8 @@ class Engaging : public Behaviors
       {
         ROS_INFO ("could not find person to interact with, falling back to wandering");
         srand (time (NULL));
-        // wander randomly to convey less serious tone within museum
+        // wander randomly to indicate less serious tone attitude
+        do
         {
           // forget the previous invalid goal
           potentialGoal.clear ();

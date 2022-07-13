@@ -16,4 +16,5 @@
 
   <!-- parameters -->
   <param name="amcl/base_frame_id" value="quori/base_link"/>
+  <param name="amcl/transform_tolerance" value="0.5"/>
 </launch>

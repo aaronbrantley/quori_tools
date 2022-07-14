@@ -9,7 +9,7 @@ int main (int argc, char ** argv)
   // classes
   DirectionListener soundDirection;
 
-  // primitive
+  // misc
   int currentSoundDirection;
   int previousSoundDirection = 0;
 
@@ -54,7 +54,7 @@ void smoothTurn (int degrees, double seconds)
     degrees = 180;
   }
 
-  // primitive
+  // misc
   double rotation = degrees * 3.1415926 / 180;
   int rate = 10;
 

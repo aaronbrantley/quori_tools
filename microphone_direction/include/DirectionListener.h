@@ -15,7 +15,7 @@ class DirectionListener
     // std
     std::string nodeName;
 
-    // primitive
+    // misc
     int direction = 0;
 
   protected:

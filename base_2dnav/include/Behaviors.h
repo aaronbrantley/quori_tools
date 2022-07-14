@@ -132,14 +132,14 @@ class Behaviors
       // if make_plan cannot find a plan
       if (!callPlanningService (planClient, planSrv))
       {
-        ROS_INFO ("goal not ok, no path from planner");
+        ROS_DEBUG_STREAM ("goal not ok, no path from planner");
         return false;
       }
 
       // if goal is too close too current location
       if (abs (goalCoordinates.at (x) - currentCoordinates.at (x)) < locationThreshold && abs (goalCoordinates.at (y) - currentCoordinates.at (y)) < locationThreshold)
       {
-        ROS_INFO ("goal not ok, too close to current location");
+        ROS_DEBUG_STREAM ("goal not ok, too close to current location");
         return false;
       }
 

@@ -3,20 +3,21 @@
 
 #include <ros/ros.h>
 
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <tf/transform_listener.h>
 
-// class for getting amcl pose
+/*
+*   finds the position of the robot in the map
+*/
 class PoseListener
 {
   private:
-    // ros
-    ros::Subscriber amclSub;
+
 
     // std
     std::string nodeName;
-    std::vector <double> poseAMCL;
+    std::vector <double> position;
 
-    // primitive
+    // misc
     int x = 0;
     int y = 1;
 
@@ -30,28 +31,23 @@ class PoseListener
       char ** argv = nullptr;
 
       ros::init (argc, argv, name);
+      // tf
+      tf::StampedTransform transformObject;
+      tf::TransformListener transformListener;
 
-      ros::NodeHandle listenNode;
+      try
+      {
+        transformListener.lookupTransform ("map", "quori/base_link", ros::Time (0), transformObject);
+      }
+      catch (tf::TransformException & exception)
+      {
+        ROS_ERROR_STREAM (exception.what ());
+      }
 
-      amclSub = listenNode.subscribe ("amcl_pose", 1, & PoseListener::amclCallback, this);
-    }
+      position.clear ();
 
-    /*
-    *   get the latest amcl_pose message and store its data in a vector
-    */
-    void amclCallback (const geometry_msgs::PoseWithCovarianceStamped::ConstPtr & amclMessage)
-    {
-      // clear the vector before pushing back
-      // this will stop the vector from becoming larger than 2 doubles (x and y coordinates)
-      poseAMCL.clear ();
-
-      // insert x coordinate
-      poseAMCL.push_back (amclMessage -> pose.pose.position.x);
-
-      // insert y coordinate
-      poseAMCL.push_back (amclMessage -> pose.pose.position.y);
-
-      ROS_DEBUG_STREAM ("amcl callback value: (" << amclMessage -> pose.pose.position.x << ", " << amclMessage -> pose.pose.position.y << ")");
+      position.push_back (transformObject.getOrigin ().x ());
+      position.push_back (transformObject.getOrigin ().y ());
     }
 
   public:
@@ -61,9 +57,11 @@ class PoseListener
 
       initializeRos (nodeName);
 
-      ROS_DEBUG_STREAM ("amcl return value: (" << poseAMCL.at (x) << ", " << poseAMCL.at (y) << ")");
 
-      return poseAMCL;
+
+      ROS_DEBUG_STREAM ("pose transform return value: (" << position [x] << ", " << position [y] << ")");
+
+      return position;
     }
 };
 

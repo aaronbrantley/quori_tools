@@ -8,7 +8,7 @@ int main ()
   // std
   std::string expression;
 
-  // primitive
+  // misc
   bool validInput = false;
 
   // while a valid expression has not been entered

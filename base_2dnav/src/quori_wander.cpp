@@ -1,5 +1,5 @@
-#include "Behaviors.h"
 #include "Listeners.h"
+#include "Behaviors.h"
 
 int main (int argc, char ** argv)
 {
@@ -18,20 +18,18 @@ int main (int argc, char ** argv)
     // whether or not the goal has been reached
     bool goalReached = false;
 
-    std::vector <std::vector <double>> emptyList;
-
-    std::vector <double> goal = engagingBehavior.findGoal (currentPose.getPose (), emptyList);
+    std::vector <double> goal = engagingBehavior.findGoal (currentPose.getPose ());
 
     // engaging behavior with no person detection causes wandering
     goalReached = engagingBehavior.goToGoal (goal);
 
     if (goalReached)
     {
-      ROS_INFO ("behavior finished successfully\n");
+      ROS_INFO_STREAM ("behavior finished successfully\n");
     }
     else
     {
-      ROS_WARN ("behavior not successful\n");
+      ROS_WARN_STREAM ("behavior not successful\n");
     }
 
     // get new information from subscriptions

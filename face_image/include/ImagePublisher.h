@@ -54,7 +54,7 @@ class ImagePublisher
       // if input expression has no file
       if (!checkExpression (fileName))
       {
-        ROS_ERROR ("invalid expression entered");
+        ROS_ERROR_STREAM ("invalid expression entered");
 
         // set expression to error image
         fileName = "error";

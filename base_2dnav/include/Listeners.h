@@ -7,12 +7,14 @@
 
 /*
 *   finds the position of the robot in the map
+*   from the transform between the robot frame
+*   and the map frame
 */
 class PoseListener
 {
   private:
     // ros
-    ros::Time now;
+    ros::Time latest;
     ros::Duration waitTime;
 
     // tf
@@ -30,7 +32,8 @@ class PoseListener
 
   protected:
     /*
-    *   allow calling roscpp functions
+    *   use roscpp functions here
+    *   after ros::init
     */
     void initializeRos (std::string name)
     {
@@ -43,8 +46,8 @@ class PoseListener
 
       try
       {
-        transformListener.waitForTransform (mapFrame, robotFrame, now, waitTime);
-        transformListener.lookupTransform (mapFrame, robotFrame, now, transformObject);
+        transformListener.waitForTransform (mapFrame, robotFrame, latest, waitTime);
+        transformListener.lookupTransform (mapFrame, robotFrame, latest, transformObject);
       }
       catch (tf::TransformException & exception)
       {
@@ -53,10 +56,16 @@ class PoseListener
     }
 
   public:
+    /*
+    *   store the position of the robot
+    *   into a vector
+    *   position [0] = x coordinate
+    *   position [1] = y coordinate
+    */
     std::vector <double> getPose ()
     {
-      now = ros::Time (0);
-      waitTime = ros::Duration (5.0);
+      latest = ros::Time (0);
+      waitTime = ros::Duration (0.5);
 
       nodeName = "pose_listener";
       mapFrame = "map";

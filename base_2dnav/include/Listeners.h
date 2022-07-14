@@ -55,7 +55,7 @@ class PoseListener
   public:
     std::vector <double> getPose ()
     {
-      now = ros::Time::now ();
+      now = ros::Time (0);
       waitTime = ros::Duration (5.0);
 
       nodeName = "pose_listener";

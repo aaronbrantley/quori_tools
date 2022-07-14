@@ -11,10 +11,17 @@
 class PoseListener
 {
   private:
+    // ros
+    ros::Time now;
+    ros::Duration waitTime;
 
+    // tf
+    tf::StampedTransform transformObject;
 
     // std
     std::string nodeName;
+    std::string mapFrame;
+    std::string robotFrame;
     std::vector <double> position;
 
     // misc
@@ -31,33 +38,36 @@ class PoseListener
       char ** argv = nullptr;
 
       ros::init (argc, argv, name);
-      // tf
-      tf::StampedTransform transformObject;
+
       tf::TransformListener transformListener;
 
       try
       {
-        transformListener.lookupTransform ("map", "quori/base_link", ros::Time (0), transformObject);
+        transformListener.waitForTransform (mapFrame, robotFrame, now, waitTime);
+        transformListener.lookupTransform (mapFrame, robotFrame, now, transformObject);
       }
       catch (tf::TransformException & exception)
       {
         ROS_ERROR_STREAM (exception.what ());
       }
-
-      position.clear ();
-
-      position.push_back (transformObject.getOrigin ().x ());
-      position.push_back (transformObject.getOrigin ().y ());
     }
 
   public:
     std::vector <double> getPose ()
     {
+      now = ros::Time::now ();
+      waitTime = ros::Duration (5.0);
+
       nodeName = "pose_listener";
+      mapFrame = "map";
+      robotFrame = "quori/base_link";
 
       initializeRos (nodeName);
 
+      position.clear ();
 
+      position.push_back (transformObject.getOrigin ().x ());
+      position.push_back (transformObject.getOrigin ().y ());
 
       ROS_DEBUG_STREAM ("pose transform return value: (" << position [x] << ", " << position [y] << ")");
 

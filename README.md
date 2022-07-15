@@ -20,7 +20,7 @@ displays an image depending on the input expression. if you would like to add yo
 takes the latest detected sound from the `/sound_direction` topic and perform tasks with the given information.
 
 ### directionTest
-prints the direction of the latest detected sound.
+prints the direction of the latest detected sound. can also be used as a calibration tool for the microphone.
 
 ### turnToSound
 rotate quori to face the direction of the last sound heard.

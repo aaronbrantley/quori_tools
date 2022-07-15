@@ -246,7 +246,7 @@ class Engaging : public Behaviors
 
       // wander randomly to indicate less serious tone attitude
       // while a valid goal has not been found
-      while (!goalIsOk);
+      while (!goalIsOk)
       {
         // forget the previous invalid goal
         potentialGoal.clear ();

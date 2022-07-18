@@ -65,7 +65,7 @@ class PoseListener
     std::vector <double> getPose ()
     {
       latest = ros::Time (0);
-      waitTime = ros::Duration (0.5);
+      waitTime = ros::Duration (1);
 
       nodeName = "pose_listener";
       mapFrame = "map";

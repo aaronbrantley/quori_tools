@@ -78,7 +78,7 @@ class Behaviors
     bool checkGoal (std::vector <double> currentCoordinates, std::vector <double> goalCoordinates, double locationThreshold)
     {
       ros::NodeHandle goalCheckNode;
-      ros::ServiceClient planClient = goalCheckNode.serviceClient <nav_msgs::GetPlan> ("move_base/make_plan", true);
+      ros::ServiceClient planClient = goalCheckNode.serviceClient <nav_msgs::GetPlan> ("move_base_node/make_plan", true);
       nav_msgs::GetPlan planSrv;
 
       // fill in the request for make_plan service
@@ -88,6 +88,7 @@ class Behaviors
       if (!callPlanningService (planClient, planSrv))
       {
         ROS_DEBUG_STREAM ("goal not ok, no path from planner");
+
         return false;
       }
 

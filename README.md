@@ -8,7 +8,7 @@ handles quori's 2d autonomous navigation.
 starts up everything needed to have quori use 2d navigation in a map.
 
 ### `rosrun base_2dnav quori_wander`
-makes quori wander around a map.
+makes quori pick a random point on the map and travel to it.
 
 ## face_image
 takes png files and displays them on quori's face projector.

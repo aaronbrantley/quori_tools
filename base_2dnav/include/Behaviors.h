@@ -5,9 +5,9 @@
 
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
-#include <nav_msgs/GetPlan.h>
 
 #include "MovementConfigurator.h"
+#include "navigation_tools.h"
 
 /*
 *   controls where and how quickly
@@ -16,86 +16,8 @@
 class Behaviors
 {
   protected:
-    // makes coordinate vector code easier to read
     int x = 0;
     int y = 1;
-
-    /*
-    *   sets up the request to create a path from
-    *   startCoordinates to endCoordinates
-    *   from https://www.programmersought.com/article/85495009501/
-    */
-    void fillPathRequest (nav_msgs::GetPlan::Request & request, std::vector <double> startCoordinates, std::vector <double> endCoordinates)
-    {
-      // set frame for starting position
-      request.start.header.frame_id = "map";
-
-      // set coordinates for starting position
-      request.start.pose.position.x = startCoordinates [x];
-      request.start.pose.position.y = startCoordinates [y];
-
-      request.start.pose.orientation.w = 1.0;
-
-      // set frame for ending position
-      request.goal.header.frame_id = "map";
-
-      // set coordinates for ending position
-      request.goal.pose.position.x = endCoordinates [x];
-      request.goal.pose.position.y = endCoordinates [y];
-
-      request.goal.pose.orientation.w = 1.0;
-
-      // from getplan service documentaion:
-      // If the goal is obstructed, how many meters the planner can relax the constraint in x and y before failing.
-      request.tolerance = 0.0;
-    }
-
-    /*
-    *   attempt to make a navigation plan
-    *   from https://www.programmersought.com/article/85495009501/
-    */
-    bool callPlanningService (ros::ServiceClient & serviceClient, nav_msgs::GetPlan & serviceMessage)
-    {
-      // perform the actual path planner call
-      // execute the actual path planner
-      if (serviceClient.call (serviceMessage))
-      {
-        // srv.response.plan.poses is the container for storing the results, traversed and taken out
-        if (!serviceMessage.response.plan.poses.empty ())
-        {
-          //ROS_DEBUG_STREAM ("make_plan success");
-
-          return true;
-        }
-      }
-
-      return false;
-    }
-
-    /*
-    *   check if the goal will fit the behavior
-    */
-    bool checkGoal (std::vector <double> currentCoordinates, std::vector <double> goalCoordinates, double locationThreshold)
-    {
-      ros::NodeHandle goalCheckNode;
-      ros::ServiceClient planClient = goalCheckNode.serviceClient <nav_msgs::GetPlan> ("move_base_node/make_plan", true);
-      nav_msgs::GetPlan planSrv;
-
-      // fill in the request for make_plan service
-      fillPathRequest (planSrv.request, currentCoordinates, goalCoordinates);
-
-      // if make_plan cannot find a plan
-      if (!callPlanningService (planClient, planSrv))
-      {
-        ROS_DEBUG_STREAM ("goal not ok, no path from planner");
-
-        return false;
-      }
-
-      ROS_INFO_STREAM ("potential goal found");
-
-      return true;
-    }
 
   public:
     /*
@@ -193,7 +115,7 @@ class Engaging : public Behaviors
         potentialGoal.push_back ((currentCoordinates [y] + peopleLocations.at (index) [y]) / 2);
 
         // test the goal
-        goalIsOk = checkGoal (currentCoordinates, potentialGoal, 0.5);
+        goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
         // iterate through the people vector backwards (its sorted from least reliable to most)
         index -= 1;
@@ -215,7 +137,7 @@ class Engaging : public Behaviors
           potentialGoal.push_back (currentCoordinates [y] + (rand () % 100 - 50) / 10);
 
           // test the goal
-          goalIsOk = checkGoal (currentCoordinates, potentialGoal, 0.5);
+          goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
         }
         // while a valid goal has not been found
         while (!goalIsOk);
@@ -257,7 +179,7 @@ class Engaging : public Behaviors
         potentialGoal.push_back (currentCoordinates [y] + (rand () % 100 - 50) / 10);
 
         // test the goal
-        goalIsOk = checkGoal (currentCoordinates, potentialGoal, 0.5);
+        goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
       }
 
 
@@ -298,7 +220,7 @@ class Conservative : public Behaviors
         potentialGoal.push_back ((currentCoordinates [y] + peopleLocations.at (index) [y]) / 2);
 
         // test the goal
-        goalIsOk = checkGoal (currentCoordinates, potentialGoal, 1.0);
+        goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
         // iterate through the people vector backwards (its sorted from least reliable to most)
         index -= 1;
@@ -341,38 +263,16 @@ class Reserved : public Behaviors
 
       movementLimiter.setVelocityLimit ('x', 0.25);
 
-      bool alreadyAtReservedLocation = false;
-      double locationThreshold = 0.33;
-
       // only go to predetermined locations
 
-      for (int index = 0; index < reservedLocations.size (); index += 1)
-      {
-        if (abs (currentCoordinates [x] - reservedLocations.at (index) [x]) < locationThreshold && abs (currentCoordinates [y] - reservedLocations.at (index) [y]) < locationThreshold)
-        {
-          alreadyAtReservedLocation = true;
-        }
-      }
+      int randomReservedLocation = rand () % 3;
 
-      if (alreadyAtReservedLocation)
-      {
-        ROS_INFO_STREAM ("already at reserved location, staying in current position");
-        goalIsOk = true;
-        potentialGoal = currentCoordinates;
-        ROS_INFO_STREAM ("potentialGoal set");
-      }
+      potentialGoal.clear ();
 
-      else
-      {
-        int randomReservedLocation = rand () % 3;
+      potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [x]);
+      potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [y]);
 
-        potentialGoal.clear ();
-
-        potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [x]);
-        potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [y]);
-
-        goalIsOk = checkGoal (currentCoordinates, potentialGoal, locationThreshold);
-      }
+      goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
       // if goal has not been found
       if (!goalIsOk)
@@ -416,7 +316,7 @@ class Stationary : public Behaviors
       potentialGoal = stationaryLocation;
 
       ROS_INFO_STREAM ("checking goal ...");
-      goalIsOk = checkGoal (currentCoordinates, potentialGoal, 0.33);
+      goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
       // if no path to stationary location is available
       if (!goalIsOk)

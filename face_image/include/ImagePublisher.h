@@ -12,30 +12,20 @@
 #include <sensor_msgs/image_encodings.h>
 
 /*
-*   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
+*   generic publisher node creation
 */
-class ImagePublisher
+class Publisher
 {
-  private:
+  protected:
     // ros
-    ros::Publisher rosPublisher;
+    ros::Publisher publisher;
 
-    // cv_bridge
-    cv_bridge::CvImage imageReader;
-
-    // sensor_msgs
-    sensor_msgs::Image rosImage;
-
-    // std
+    // standard
     std::string publishTopic;
     std::string nodeName;
-    std::string packagePath = ros::package::getPath ("face_image");
-    std::string imagePath = packagePath + "/images/";
-    std::vector <std::string> expressionList;
 
-  protected:
     /*
-    *   allow calling roscpp functions
+    *   create a ros node given a name
     */
     void initializeRos (std::string name)
     {
@@ -44,6 +34,33 @@ class ImagePublisher
       char ** argv = nullptr;
 
       ros::init (argc, argv, name);
+    }
+};
+
+/*
+*   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
+*/
+class ImagePublisher : public Publisher
+{
+  private:
+    // cv_bridge
+    cv_bridge::CvImage imageReader;
+
+    // sensor_msgs
+    sensor_msgs::Image rosImage;
+
+    // standard
+    std::string packagePath = ros::package::getPath ("face_image");
+    std::string imagePath = packagePath + "/images/";
+    std::vector <std::string> expressionList;
+
+  protected:
+    /*
+    *
+    */
+    void initialize ()
+    {
+      initializeRos (nodeName);
     }
 
     /*
@@ -118,7 +135,7 @@ class ImagePublisher
     {
       nodeName = "image_publisher";
 
-      initializeRos (nodeName);
+      initialize ();
       ros::NodeHandle imageNode;
       ros::Rate loopRate (5);
 
@@ -134,13 +151,13 @@ class ImagePublisher
       imageReader.encoding = "bgr8";
       imageReader.toImageMsg (rosImage);
 
-      rosPublisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1);
+      publisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1);
 
       // quori face application does not like latched publishing
       while (imageNode.ok ())
       {
         // publish image to topic
-        rosPublisher.publish (rosImage);
+        publisher.publish (rosImage);
 
         loopRate.sleep ();
       }
@@ -165,7 +182,7 @@ class ImagePublisher
     }
 
     /*
-    *   check if expression has an associated jpg
+    *   check if expression has an associated png
     */
     bool checkExpression (std::string expressionName)
     {
@@ -174,14 +191,14 @@ class ImagePublisher
       // for every string in expressionList
       for (int index = 0; index < expressionList.size (); index += 1)
       {
-        // if expression has an associated jpg
+        // if expression has an associated png
         if (expressionName == expressionList.at (index))
         {
           return true;
         }
       }
 
-      // if no matching jpg was found
+      // if no matching png was found
       return false;
     }
 };

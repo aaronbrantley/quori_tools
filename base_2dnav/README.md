@@ -1,8 +1,11 @@
 ## base_2dnav
-handles quori's 2d navigation.
+Handles Quori's navigation
 
 ### `roslaunch base_2dnav base_2dnav.launch`
-starts up everything needed to have quori use 2d navigation in a map.
+Starts up everything needed to have Quori navigate a map
 
 ### `rosrun base_2dnav quori_wander`
-makes quori pick a random point on the map and travel to it.
+Pick a random point on the map and attempt to travel there
+
+### `rosrun base_2dnav quori_san`
+Pick a point on the map to travel to depending on room density and vulnerability

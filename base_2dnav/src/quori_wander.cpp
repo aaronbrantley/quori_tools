@@ -3,39 +3,43 @@
 
 int main (int argc, char ** argv)
 {
-  // classes
-  PoseListener currentPose;
-  Engaging engagingBehavior;
+	// classes
+	PoseListener currentPose;
+	Engaging engagingBehavior;
 
-  // ros
-  ros::init (argc, argv, "quori_wander");
-  ros::NodeHandle wanderNode;
-  ros::Rate loopRate (1);
+	// ros
+	ros::init (argc, argv, "quori_wander");
+	ros::NodeHandle wanderNode;
+	ros::Rate loopRate (1);
 
-  // loop until ctrl-c is pressed or ros::shutdown is called
-  while (wanderNode.ok ())
-  {
-    // whether or not the goal has been reached
-    bool goalReached = false;
+	/*
+	* 	loop until ctrl-c is pressed or
+	* 	ros::shutdown is called
+	*/
+	while (wanderNode.ok ())
+	{
+		bool goalReached = false;
 
-    std::vector <double> goal = engagingBehavior.findGoal (currentPose.getPose ());
+		std::vector <double> goal = engagingBehavior.findGoal (currentPose.getPose ());
 
-    // engaging behavior with no person detection causes wandering
-    goalReached = engagingBehavior.goToGoal (goal);
+		/*
+		* 	engaging behavior with no person
+		* 	detection causes wandering
+		*/
+		goalReached = engagingBehavior.goToGoal (goal);
 
-    if (goalReached)
-    {
-      ROS_INFO_STREAM ("behavior finished successfully\n");
-    }
-    else
-    {
-      ROS_WARN_STREAM ("behavior not successful\n");
-    }
+		if (goalReached)
+		{
+			ROS_INFO_STREAM ("behavior finished successfully\n");
+		}
+		else
+		{
+			ROS_WARN_STREAM ("behavior not successful\n");
+		}
 
-    // get new information from subscriptions
-    ros::spinOnce ();
-    loopRate.sleep ();
-  }
+		ros::spinOnce ();
+		loopRate.sleep ();
+	}
 
-  return 0;
+	return 0;
 }

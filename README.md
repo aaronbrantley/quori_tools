@@ -8,4 +8,4 @@ handles quori's 2d navigation.
 takes png files and displays them on quori's face projector.
 
 ## microphone_direction
-takes the latest detected sound from the `/sound_direction` topic and perform tasks with the given information.
+takes the latest detected sound and performs tasks with the given information.

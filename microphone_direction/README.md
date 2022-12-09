@@ -1,5 +1,5 @@
 ## microphone_direction
-takes the latest detected sound from the `/sound_direction` topic and perform tasks with the given information.
+takes the latest detected sound and performs tasks with the given information.
 
 ### `rosrun microphone_direction directionTest`
 prints the direction of the latest detected sound. can also be used as a calibration tool for the microphone.

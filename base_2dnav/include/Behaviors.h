@@ -15,320 +15,320 @@
 */
 class Behaviors
 {
-  protected:
-    int x = 0;
-    int y = 1;
+	protected:
+		int x = 0;
+		int y = 1;
 
-  public:
-    /*
-    *   find a goal that fits the behavior
-    */
-    virtual std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
-    {
-      // set a navigation goal
+	public:
+		/*
+		*   find a goal that fits the behavior
+		*/
+		virtual std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
+		{
+			// set a navigation goal
 
-      return {0, 0};
-    }
+			return {0, 0};
+		}
 
-    /*
-    *   send the robot to the goal
-    *   from http://edu.gaitech.hk/turtlebot/map-navigation.html
-    */
-    bool goToGoal (std::vector <double> goalCoordinates)
-    {
-      // define a client for to send goal requests to the move_base server through a SimpleActionClient
-      actionlib::SimpleActionClient <move_base_msgs::MoveBaseAction> ac ("move_base", true);
+		/*
+		*   send the robot to the goal
+		*   from http://edu.gaitech.hk/turtlebot/map-navigation.html
+		*/
+		bool goToGoal (std::vector <double> goalCoordinates)
+		{
+			// define a client for to send goal requests to the move_base server through a SimpleActionClient
+			actionlib::SimpleActionClient <move_base_msgs::MoveBaseAction> ac ("move_base", true);
 
-      // wait for the action server to come up
-      while (!ac.waitForServer (ros::Duration (5.0)))
-      {
-        ROS_DEBUG_STREAM ("waiting for the move_base action server to come up");
-      }
+			// wait for the action server to come up
+			while (!ac.waitForServer (ros::Duration (5.0)))
+			{
+				ROS_DEBUG_STREAM ("waiting for the move_base action server to come up");
+			}
 
-      move_base_msgs::MoveBaseGoal goal;
+			move_base_msgs::MoveBaseGoal goal;
 
-      // set up the frame parameters
-      goal.target_pose.header.frame_id = "map";
-      goal.target_pose.header.stamp = ros::Time::now ();
+			// set up the frame parameters
+			goal.target_pose.header.frame_id = "map";
+			goal.target_pose.header.stamp = ros::Time::now ();
 
-      // set goal coordinates
-      goal.target_pose.pose.position.x =  goalCoordinates [x];
-      goal.target_pose.pose.position.y =  goalCoordinates [y];
-      goal.target_pose.pose.position.z =  0.0;
-      goal.target_pose.pose.orientation.x = 0.0;
-      goal.target_pose.pose.orientation.y = 0.0;
-      goal.target_pose.pose.orientation.z = 0.0;
-      goal.target_pose.pose.orientation.w = 1.0;
+			// set goal coordinates
+			goal.target_pose.pose.position.x =  goalCoordinates [x];
+			goal.target_pose.pose.position.y =  goalCoordinates [y];
+			goal.target_pose.pose.position.z =  0.0;
+			goal.target_pose.pose.orientation.x = 0.0;
+			goal.target_pose.pose.orientation.y = 0.0;
+			goal.target_pose.pose.orientation.z = 0.0;
+			goal.target_pose.pose.orientation.w = 1.0;
 
-      //ROS_INFO_STREAM ("goal: (" << goalCoordinates [x] << ", " << goalCoordinates [y] << ")");
+			//ROS_INFO_STREAM ("goal: (" << goalCoordinates [x] << ", " << goalCoordinates [y] << ")");
 
-      // send the goal
-      ac.sendGoal (goal);
-      ac.waitForResult ();
+			// send the goal
+			ac.sendGoal (goal);
+			ac.waitForResult ();
 
-      if (ac.getState () == actionlib::SimpleClientGoalState::SUCCEEDED)
-      {
-       //ROS_INFO_STREAM ("robot reached the destination");
-       return true;
-      }
+			if (ac.getState () == actionlib::SimpleClientGoalState::SUCCEEDED)
+			{
+				//ROS_INFO_STREAM ("robot reached the destination");
+				return true;
+			}
 
-      else
-      {
-       //ROS_WARN_STREAM ("robot did not reach the destination");
-       return false;
-      }
-    }
+			else
+			{
+				//ROS_WARN_STREAM ("robot did not reach the destination");
+				return false;
+			}
+		}
 };
 
 class Engaging : public Behaviors
 {
-  public:
-    /*
-    *   find a goal that fits the behavior
-    */
-    std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
-    {
-      // enable control of speed limit
-      MovementConfigurator movementLimiter;
+	public:
+		/*
+		*   find a goal that fits the behavior
+		*/
+		std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
+		{
+			// enable control of speed limit
+			MovementConfigurator movementLimiter;
 
-      // stores goals to be tested
-      std::vector <double> potentialGoal;
-      // whether or not the goal meets the requirements
-      bool goalIsOk = false;
+			// stores goals to be tested
+			std::vector <double> potentialGoal;
+			// whether or not the goal meets the requirements
+			bool goalIsOk = false;
 
-      // search for a goal
-      ROS_INFO_STREAM ("engaging behavior");
+			// search for a goal
+			ROS_INFO_STREAM ("engaging behavior");
 
-      // set speed limit
-      movementLimiter.setVelocityLimit ('x', 0.45);
+			// set speed limit
+			movementLimiter.setVelocityLimit ('x', 0.45);
 
-      int index = peopleLocations.size ();
+			int index = peopleLocations.size ();
 
-      // while there is a person location to test and a valid goal has not been found
-      while (index > 0 && !goalIsOk)
-      {
-        // forget the previous invalid goal
-        potentialGoal.clear ();
+			// while there is a person location to test and a valid goal has not been found
+			while (index > 0 && !goalIsOk)
+			{
+				// forget the previous invalid goal
+				potentialGoal.clear ();
 
-        // set a new goal halfway between the robot and a person
-        potentialGoal.push_back ((currentCoordinates [x] + peopleLocations.at (index) [x]) / 2);
-        potentialGoal.push_back ((currentCoordinates [y] + peopleLocations.at (index) [y]) / 2);
+				// set a new goal halfway between the robot and a person
+				potentialGoal.push_back ((currentCoordinates [x] + peopleLocations.at (index) [x]) / 2);
+				potentialGoal.push_back ((currentCoordinates [y] + peopleLocations.at (index) [y]) / 2);
 
-        // test the goal
-        goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
+				// test the goal
+				goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
-        // iterate through the people vector backwards (its sorted from least reliable to most)
-        index -= 1;
-      }
+				// iterate through the people vector backwards (its sorted from least reliable to most)
+				index -= 1;
+			}
 
-      // if goal between a person has not been found
-      if (!goalIsOk)
-      {
-        ROS_INFO_STREAM ("could not find person to interact with, falling back to wandering");
-        srand (time (NULL));
-        // wander randomly to indicate less serious tone attitude
-        do
-        {
-          // forget the previous invalid goal
-          potentialGoal.clear ();
+			// if goal between a person has not been found
+			if (!goalIsOk)
+			{
+				ROS_INFO_STREAM ("could not find person to interact with, falling back to wandering");
+				srand (time (NULL));
+				// wander randomly to indicate less serious tone attitude
+				do
+				{
+					// forget the previous invalid goal
+					potentialGoal.clear ();
 
-          // set a goal at a random location relative to the robot's current location
-          potentialGoal.push_back (currentCoordinates [x] + (rand () % 100 - 50) / 10);
-          potentialGoal.push_back (currentCoordinates [y] + (rand () % 100 - 50) / 10);
+					// set a goal at a random location relative to the robot's current location
+					potentialGoal.push_back (currentCoordinates [x] + (rand () % 100 - 50) / 10);
+					potentialGoal.push_back (currentCoordinates [y] + (rand () % 100 - 50) / 10);
 
-          // test the goal
-          goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
-        }
-        // while a valid goal has not been found
-        while (!goalIsOk);
-      }
+					// test the goal
+					goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
+				}
+				// while a valid goal has not been found
+				while (!goalIsOk);
+			}
 
-      return potentialGoal;
-    }
+			return potentialGoal;
+		}
 
-    /*
-    *   find a goal that fits the behavior
-    */
-    std::vector <double> findGoal (std::vector <double> currentCoordinates)
-    {
-      // enable control of speed limit
-      MovementConfigurator movementLimiter;
+		/*
+		*   find a goal that fits the behavior
+		*/
+		std::vector <double> findGoal (std::vector <double> currentCoordinates)
+		{
+			// enable control of speed limit
+			MovementConfigurator movementLimiter;
 
-      // stores goals to be tested
-      std::vector <double> potentialGoal;
-      // whether or not the goal meets the requirements
-      bool goalIsOk = false;
+			// stores goals to be tested
+			std::vector <double> potentialGoal;
+			// whether or not the goal meets the requirements
+			bool goalIsOk = false;
 
-      // search for a goal
-      ROS_INFO_STREAM ("engaging behavior (no people detected - wandering)");
+			// search for a goal
+			ROS_INFO_STREAM ("engaging behavior (no people detected - wandering)");
 
-      // set speed limit
-      movementLimiter.setVelocityLimit ('x', 0.45);
+			// set speed limit
+			movementLimiter.setVelocityLimit ('x', 0.45);
 
-      srand (time (NULL));
+			srand (time (NULL));
 
-      // wander randomly to indicate less serious tone attitude
-      // while a valid goal has not been found
-      while (!goalIsOk)
-      {
-        // forget the previous invalid goal
-        potentialGoal.clear ();
+			// wander randomly to indicate less serious tone attitude
+			// while a valid goal has not been found
+			while (!goalIsOk)
+			{
+			  // forget the previous invalid goal
+			  potentialGoal.clear ();
 
-        // set a goal at a random location relative to the robot's current location
-        potentialGoal.push_back (currentCoordinates [x] + (rand () % 100 - 50) / 10);
-        potentialGoal.push_back (currentCoordinates [y] + (rand () % 100 - 50) / 10);
+			  // set a goal at a random location relative to the robot's current location
+			  potentialGoal.push_back (currentCoordinates [x] + (rand () % 100 - 50) / 10);
+			  potentialGoal.push_back (currentCoordinates [y] + (rand () % 100 - 50) / 10);
 
-        // test the goal
-        goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
-      }
+			  // test the goal
+			  goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
+			}
 
 
-      return potentialGoal;
-    }
+			return potentialGoal;
+		}
 };
 
 class Conservative : public Behaviors
 {
-  public:
-    /*
-    *   find a goal that fits the behavior
-    */
-    std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
-    {
-      MovementConfigurator movementLimiter;
+	public:
+		/*
+		*   find a goal that fits the behavior
+		*/
+		std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
+		{
+			MovementConfigurator movementLimiter;
 
-      // stores goals to be tested
-      std::vector <double> potentialGoal;
-      // whether or not the goal meets the requirements
-      bool goalIsOk = false;
+			// stores goals to be tested
+			std::vector <double> potentialGoal;
+			// whether or not the goal meets the requirements
+			bool goalIsOk = false;
 
-      // search for a goal
-      ROS_INFO_STREAM ("conservative behavior");
+			// search for a goal
+			ROS_INFO_STREAM ("conservative behavior");
 
-      movementLimiter.setVelocityLimit ('x', 0.35);
+			movementLimiter.setVelocityLimit ('x', 0.35);
 
-      int index = peopleLocations.size ();
+			int index = peopleLocations.size ();
 
-      // while a valid goal has not been found
-      while (index > 0 && !goalIsOk)
-      {
-        // forget the previous invalid goal
-        potentialGoal.clear ();
+			// while a valid goal has not been found
+			while (index > 0 && !goalIsOk)
+			{
+				// forget the previous invalid goal
+				potentialGoal.clear ();
 
-        // set a new goal, todo: keep a larger distance from people
-        potentialGoal.push_back ((currentCoordinates [x] + peopleLocations.at (index) [x]) / 2);
-        potentialGoal.push_back ((currentCoordinates [y] + peopleLocations.at (index) [y]) / 2);
+				// set a new goal, todo: keep a larger distance from people
+				potentialGoal.push_back ((currentCoordinates [x] + peopleLocations.at (index) [x]) / 2);
+				potentialGoal.push_back ((currentCoordinates [y] + peopleLocations.at (index) [y]) / 2);
 
-        // test the goal
-        goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
+				// test the goal
+				goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
-        // iterate through the people vector backwards (its sorted from least reliable to most)
-        index -= 1;
-      }
+				// iterate through the people vector backwards (its sorted from least reliable to most)
+				index -= 1;
+			}
 
-      // if goal has not been found
-      if (!goalIsOk)
-      {
-        ROS_INFO_STREAM ("could not find person to interact with, staying in current position");
+			// if goal has not been found
+			if (!goalIsOk)
+			{
+				ROS_INFO_STREAM ("could not find person to interact with, staying in current position");
 
-        // stay where you are
-        potentialGoal = currentCoordinates;
-        ROS_INFO_STREAM ("potentialGoal set");
-      }
+				// stay where you are
+				potentialGoal = currentCoordinates;
+				ROS_INFO_STREAM ("potentialGoal set");
+			}
 
-      return potentialGoal;
-    }
+			return potentialGoal;
+		}
 };
 
 class Reserved : public Behaviors
 {
-  public:
-    /*
-    *   find a goal that fits the behavior
-    */
-    std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
-    {
-      MovementConfigurator movementLimiter;
+	public:
+		/*
+		*   find a goal that fits the behavior
+		*/
+		std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
+		{
+			MovementConfigurator movementLimiter;
 
-      // a set of predetermined locations for the robot to go to during reserved behavior
-      std::vector <std::vector <double>> reservedLocations = {{0, 0}, {0, 0}};
+			// a set of predetermined locations for the robot to go to during reserved behavior
+			std::vector <std::vector <double>> reservedLocations = {{0, 0}, {0, 0}};
 
-      // stores goals to be tested
-      std::vector <double> potentialGoal;
-      // whether or not the goal meets the requirements
-      bool goalIsOk = false;
+			// stores goals to be tested
+			std::vector <double> potentialGoal;
+			// whether or not the goal meets the requirements
+			bool goalIsOk = false;
 
-      // search for a goal
-      ROS_INFO_STREAM ("reserved behavior");
+			// search for a goal
+			ROS_INFO_STREAM ("reserved behavior");
 
-      movementLimiter.setVelocityLimit ('x', 0.25);
+			movementLimiter.setVelocityLimit ('x', 0.25);
 
-      // only go to predetermined locations
+			// only go to predetermined locations
 
-      int randomReservedLocation = rand () % 3;
+			int randomReservedLocation = rand () % 3;
 
-      potentialGoal.clear ();
+			potentialGoal.clear ();
 
-      potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [x]);
-      potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [y]);
+			potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [x]);
+			potentialGoal.push_back (reservedLocations.at (randomReservedLocation) [y]);
 
-      goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
+			goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
-      // if goal has not been found
-      if (!goalIsOk)
-      {
-        ROS_INFO_STREAM ("could not go to predetermined location, staying in current position");
-        // stay where you are
-        potentialGoal = currentCoordinates;
-        ROS_INFO_STREAM ("potentialGoal set");
-      }
+			// if goal has not been found
+			if (!goalIsOk)
+			{
+				ROS_INFO_STREAM ("could not go to predetermined location, staying in current position");
+				// stay where you are
+				potentialGoal = currentCoordinates;
+				ROS_INFO_STREAM ("potentialGoal set");
+			}
 
-      return potentialGoal;
-    }
+			return potentialGoal;
+		}
 };
 
 class Stationary : public Behaviors
 {
-  public:
-    /*
-    *   find a goal that fits the behavior
-    */
-    std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
-    {
-      MovementConfigurator movementLimiter;
+	public:
+		/*
+		*   find a goal that fits the behavior
+		*/
+		std::vector <double> findGoal (std::vector <double> currentCoordinates, std::vector <std::vector <double>> peopleLocations)
+		{
+			MovementConfigurator movementLimiter;
 
-      // the "kiosk" location for the robot to stay in during stationary behavior
-      std::vector <double> stationaryLocation = {-3.35937, -3.2264};
+			// the "kiosk" location for the robot to stay in during stationary behavior
+			std::vector <double> stationaryLocation = {-3.35937, -3.2264};
 
-      // stores goals to be tested
-      std::vector <double> potentialGoal;
-      // whether or not the goal meets the requirements
-      bool goalIsOk = false;
+			// stores goals to be tested
+			std::vector <double> potentialGoal;
+			// whether or not the goal meets the requirements
+			bool goalIsOk = false;
 
-      // search for a goal
-      ROS_INFO_STREAM ("stationary behavior");
+			// search for a goal
+			ROS_INFO_STREAM ("stationary behavior");
 
-      ROS_INFO_STREAM ("setting velocity limit to 0.15 ...");
-      movementLimiter.setVelocityLimit ('x', 0.15);
+			ROS_INFO_STREAM ("setting velocity limit to 0.15 ...");
+			movementLimiter.setVelocityLimit ('x', 0.15);
 
-      // go to designated stationary location
+			// go to designated stationary location
 
-      potentialGoal = stationaryLocation;
+			potentialGoal = stationaryLocation;
 
-      ROS_INFO_STREAM ("checking goal ...");
-      goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
+			ROS_INFO_STREAM ("checking goal ...");
+			goalIsOk = navigationTools::checkGoal (currentCoordinates, potentialGoal);
 
-      // if no path to stationary location is available
-      if (!goalIsOk)
-      {
-        ROS_INFO_STREAM ("could not go to stationary location, staying in current position");
-        // stay where you are
-        potentialGoal = currentCoordinates;
-        ROS_INFO_STREAM ("potentialGoal set");
-      }
+			// if no path to stationary location is available
+			if (!goalIsOk)
+			{
+				ROS_INFO_STREAM ("could not go to stationary location, staying in current position");
+				// stay where you are
+				potentialGoal = currentCoordinates;
+				ROS_INFO_STREAM ("potentialGoal set");
+			}
 
-      return potentialGoal;
-    }
+			return potentialGoal;
+		}
 };
 
 #endif

@@ -1,20 +1,20 @@
 <launch>
-  <!-- map -->
-  <node name="lab_map" pkg="map_server" type="map_server" args="$(find base_2dnav)/maps/lab.yaml"/>
+	<!-- map -->
+	<node name="lab_map" pkg="map_server" type="map_server" args="$(find base_2dnav)/maps/lab.yaml"/>
 
-  <!-- robot -->
-  <include file="$(find quori_launch)/launch/robot.launch"/>
+	<!-- robot -->
+	<include file="$(find quori_launch)/launch/robot.launch"/>
 
-  <!-- navigation -->
-  <include file="$(find quori_nav)/launch/move_base.launch"/>
+	<!-- navigation -->
+	<include file="$(find quori_nav)/launch/move_base.launch"/>
 
-  <!-- lidar -->
-  <include file="$(find quori_launch)/launch/filtered_laser.launch"/>
+	<!-- lidar -->
+	<include file="$(find quori_launch)/launch/filtered_laser.launch"/>
 
-  <!-- localization -->
-  <include file="$(find amcl)/examples/amcl_omni.launch"/>
+	<!-- localization -->
+	<include file="$(find amcl)/examples/amcl_omni.launch"/>
 
-  <!-- parameters -->
-  <param name="amcl/base_frame_id" value="quori/base_link"/>
-  <param name="amcl/transform_tolerance" value="0.5"/>
+	<!-- parameters -->
+	<param name="amcl/base_frame_id" value="quori/base_link"/>
+	<param name="amcl/transform_tolerance" value="0.5"/>
 </launch>

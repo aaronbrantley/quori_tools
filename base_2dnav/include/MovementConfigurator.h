@@ -5,86 +5,86 @@
 
 class MovementConfigurator
 {
-  private:
-    // thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
-    dynamic_reconfigure::ReconfigureRequest request;
-    dynamic_reconfigure::ReconfigureResponse response;
-    dynamic_reconfigure::DoubleParameter parameter;
-    dynamic_reconfigure::Config config;
+	private:
+		// thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
+		dynamic_reconfigure::ReconfigureRequest request;
+		dynamic_reconfigure::ReconfigureResponse response;
+		dynamic_reconfigure::DoubleParameter parameter;
+		dynamic_reconfigure::Config config;
 
-    std::string parameterName;
-    double parameterValue;
+		std::string parameterName;
+		double parameterValue;
 
-  public:
-    void setAccelerationLimit (char type, double limit)
-    {
-      switch (type)
-      {
-        case 'x':
-        {
-          parameterName = "acc_lim_x";
+	public:
+		void setAccelerationLimit (char type, double limit)
+		{
+			switch (type)
+			{
+				case 'x':
+				{
+					parameterName = "acc_lim_x";
 
-          break;
-        }
+					break;
+				}
 
-        case 'y':
-        {
-          parameterName = "acc_lim_y";
+				case 'y':
+				{
+					parameterName = "acc_lim_y";
 
-          break;
-        }
+					break;
+				}
 
-        case 't':
-        {
-          parameterName = "acc_lim_th";
+				case 't':
+				{
+					parameterName = "acc_lim_th";
 
-          break;
-        }
-      }
+					break;
+				}
+			}
 
-      // thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
-      parameter.name = parameterName;
-      parameter.value = limit;
-      config.doubles.push_back (parameter);
+			// thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
+			parameter.name = parameterName;
+			parameter.value = limit;
+			config.doubles.push_back (parameter);
 
-      request.config = config;
+			request.config = config;
 
-      ros::service::call ("move_base/TrajectoryPlannerROS/set_parameters", request, response);
-    }
+			ros::service::call ("move_base/TrajectoryPlannerROS/set_parameters", request, response);
+		}
 
-    void setVelocityLimit (char type, double limit)
-    {
-      switch (type)
-      {
-        case 'x':
-        {
-          parameterName = "max_vel_x";
+		void setVelocityLimit (char type, double limit)
+		{
+			switch (type)
+			{
+				case 'x':
+				{
+					parameterName = "max_vel_x";
 
-          break;
-        }
+					break;
+				}
 
-        case 'y':
-        {
-          parameterName = "max_vel_y";
+				case 'y':
+				{
+					parameterName = "max_vel_y";
 
-          break;
-        }
+					break;
+				}
 
-        case 'r':
-        {
-          parameterName = "max_rot_vel";
+				case 'r':
+				{
+					parameterName = "max_rot_vel";
 
-          break;
-        }
-      }
+					break;
+				}
+			}
 
-      parameter.name = parameterName;
-      parameter.value = limit;
-      config.doubles.push_back (parameter);
+			parameter.name = parameterName;
+			parameter.value = limit;
+			config.doubles.push_back (parameter);
 
-      request.config = config;
+			request.config = config;
 
-      // thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
-      ros::service::call ("move_base/TrajectoryPlannerROS/set_parameters", request, response);
-    }
+			// thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
+			ros::service::call ("move_base/TrajectoryPlannerROS/set_parameters", request, response);
+		}
 };

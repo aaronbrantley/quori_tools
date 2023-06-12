@@ -13,6 +13,7 @@ char getRandomBehavior ()
 	// random number generation
 	std::srand (std::time (nullptr));
 
+	// random value between 0 and behavior list size - 1
 	int randomNumber = std::rand () % behaviors.size ();
 
 	return behaviors.at (randomNumber);
@@ -44,21 +45,7 @@ int main (int argc, char ** argv)
 	*/
 	while (ros::ok ())
 	{
-		/*
-		* 	room density
-		* 	0 = empty
-		* 	10 = crowded
-		*/
-		double density = 0;
-
-		/*
-		* 	room vulnerability
-		* 	0 = sociable
-		* 	10 = serious
-		*/
-		double vulnerability = 0;
-
-		std::vector <double> goal;
+		point goal;
 		bool goalReached = false;
 
 		/*
@@ -66,16 +53,16 @@ int main (int argc, char ** argv)
 		* 	selection of a behavior
 		*/
 		goal = san::findBehaviorGoal (getRandomBehavior ());
-		goalReached = behavior.goToGoal (goal);
+		goalReached = behavior.goToGoal ();
 
 		if (goalReached)
 		{
-			ROS_INFO ("behavior finished successfully\n");
+			ROS_INFO ("Behavior finished successfully");
 		}
 
 		else
 		{
-			ROS_WARN ("behavior not successful\n");
+			ROS_WARN ("Behavior not successful");
 		}
 
 		ros::spinOnce ();

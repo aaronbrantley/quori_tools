@@ -1,0 +1,170 @@
+#ifndef LISTENERS_H_
+#define LISTENERS_H_
+
+#include <ros/ros.h>
+
+#include <tf/transform_listener.h>
+#include <people_msgs/PositionMeasurementArray.h>
+
+#include "point.h"
+
+/*
+*   generic listener node creation
+*/
+class Listener
+{
+	private:
+		std::string nodeName;
+		ros::Subscriber subscriber;
+
+	protected:
+		/*
+		* 	enables ros functionality
+		* 	creates listener node
+		* 	and subscribes to /topic
+		*/
+		void initialize ()
+		{
+			int argc = 0;
+			char ** argv = nullptr;
+
+			ros::init (argc, argv, nodeName);
+
+			ros::NodeHandle listener;
+			/* subscriber = listener.subscribe ("topic", 0, & Listener::callback, this); */
+
+			ROS_DEBUG_STREAM ("Initialized " << nodeName);
+		}
+
+		/*
+		* 	processes a message
+		* 	from /topic
+		*/
+		void callback (/* const <message type>::ConstPtr & message */)
+		{
+			/*
+			* 	do something with the message here
+			*/
+		}
+};
+
+/*
+*   finds the position of the robot in the map
+*   from the transform between the robot frame
+*   and the map frame
+*/
+class PositionListener : public Listener
+{
+	private:
+		point position;
+		tf::StampedTransform transform;
+		ros::Time latest;
+		ros::Duration waitTime;
+
+		std::string nodeName = "position_listener";
+		std::string mapFrame = "map";
+		std::string robotFrame = "quori/base_link";
+
+	protected:
+		/*
+		*   use roscpp functions here
+		*/
+		void initialize ()
+		{
+			tf::TransformListener transformListener;
+
+			try
+			{
+				transformListener.waitForTransform (mapFrame, robotFrame, latest, waitTime);
+				transformListener.lookupTransform (mapFrame, robotFrame, latest, transform);
+			}
+			catch (tf::TransformException & exception)
+			{
+				ROS_ERROR_STREAM (exception.what ());
+			}
+		}
+
+	public:
+		/*
+		*   store the position of the robot
+		*   into a vector
+		*/
+		point getPosition ()
+		{
+			latest = ros::Time (0);
+			waitTime = ros::Duration (1);
+
+			initialize ();
+
+			position.x = transform.getOrigin ().x ();
+			position.y = transform.getOrigin ().y ();
+
+			ROS_DEBUG_STREAM (nodeName << " position: (" << position.x << ", " << position.y << ")");
+
+			return position;
+		}
+};
+
+/*
+* 	listens to the messages
+* 	sent to the lidar_voting topic
+*/
+class VoteListener : public Listener
+{
+	private:
+		std::string nodeName = "vote_listener";
+		std::vector <point> votedDetections;
+		ros::Subscriber voteSubscriber;
+
+	protected:
+		/*
+		* 	enables ros functionality
+		* 	creates listener node
+		* 	and subscribes to /people
+		*/
+		void initialize ()
+		{
+			int argc = 0;
+			char ** argv = nullptr;
+
+			ros::init (argc, argv, nodeName);
+
+			ros::NodeHandle voteListener;
+			voteSubscriber = voteListener.subscribe ("people_voting", 0, & VoteListener::voteCallback, this);
+
+			ROS_DEBUG_STREAM ("Initialized " << nodeName);
+		}
+
+		/*
+		* 	clears the previous detection vector
+		* 	puts detection data into the point struct
+		* 	add each detection to the detections vector
+		*/
+		void voteCallback (const people_msgs::PositionMeasurementArray::ConstPtr & voteMessage)
+		{
+			votedDetections.clear ();
+
+			for (int index = 0; index < voteMessage -> people.size (); index += 1)
+			{
+				point voted;
+
+				voted.x = voteMessage -> people [index].pos.x;
+				voted.y = voteMessage -> people [index].pos.y;
+
+				votedDetections.push_back (voted);
+			}
+		}
+
+		public:
+			VoteListener ()
+			{
+				initialize ();
+			}
+
+			std::vector <point> getVotedDetections ()
+			{
+				return votedDetections;
+			}
+};
+
+#endif

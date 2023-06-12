@@ -6,7 +6,7 @@
 class MovementConfigurator
 {
 	private:
-		// thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
+		// https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
 		dynamic_reconfigure::ReconfigureRequest request;
 		dynamic_reconfigure::ReconfigureResponse response;
 		dynamic_reconfigure::DoubleParameter parameter;
@@ -42,13 +42,10 @@ class MovementConfigurator
 				}
 			}
 
-			// thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
 			parameter.name = parameterName;
 			parameter.value = limit;
 			config.doubles.push_back (parameter);
-
 			request.config = config;
-
 			ros::service::call ("move_base/TrajectoryPlannerROS/set_parameters", request, response);
 		}
 
@@ -81,10 +78,7 @@ class MovementConfigurator
 			parameter.name = parameterName;
 			parameter.value = limit;
 			config.doubles.push_back (parameter);
-
 			request.config = config;
-
-			// thanks https://answers.ros.org/question/12276/is-there-a-c-api-for-a-dynamic-reconfigure-client/?answer=64043#post-id-64043
 			ros::service::call ("move_base/TrajectoryPlannerROS/set_parameters", request, response);
 		}
 };

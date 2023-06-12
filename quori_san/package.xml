@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package format="2">
+	<name> quori_san </name>
+	<version> 0.1.0 </version>
+	<description> The quori_san package </description>
+	<maintainer email="aaronbrantley@nevada.unr.edu"> Aaron Brantley </maintainer>
+	<license> MIT </license>
+	<buildtool_depend> catkin </buildtool_depend>
+</package>

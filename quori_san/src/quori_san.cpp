@@ -3,19 +3,15 @@
 
 int main (int argc, char ** argv)
 {
-	// classes
 	Behaviors behavior;
 
-	// initialize node
 	ros::init (argc, argv, "quori_san");
 	ros::NodeHandle sanNode;
 	ros::Rate loopRate (1);
 
 	/*
-	* 	spinOnce has to be called twice
-	* 	before getting correct pose,
-	* 	there's probably a better way to do
-	* 	this
+	* 	spinOnce has to be called twice before getting correct pose
+	* 	there's probably a better way to do this
 	*/
 	ros::spinOnce ();
 	loopRate.sleep ();
@@ -41,7 +37,7 @@ int main (int argc, char ** argv)
 		*/
 		double vulnerability = 0;
 
-		std::vector <double> goal;
+		point goal;
 		bool goalReached = false;
 
 		/*
@@ -50,16 +46,16 @@ int main (int argc, char ** argv)
 		* 	there
 		*/
 		goal = san::findBehaviorGoal (san::readRoom (density, vulnerability));
-		goalReached = behavior.goToGoal (goal);
+		goalReached = behavior.goToGoal ();
 
 		if (goalReached)
 		{
-			ROS_INFO ("behavior finished successfully\n");
+			ROS_INFO ("Behavior finished successfully");
 		}
 
 		else
 		{
-			ROS_WARN ("behavior not successful\n");
+			ROS_WARN ("Behavior not successful");
 		}
 
 		ros::spinOnce ();

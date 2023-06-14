@@ -46,6 +46,12 @@ class Listener
 			* 	do something with the message here
 			*/
 		}
+
+	public:
+		Listener ()
+		{
+			initialize ();
+		}
 };
 
 /*
@@ -85,6 +91,10 @@ class PositionListener : public Listener
 		}
 
 	public:
+		PositionListener ()
+		{
+				initialize ();
+		}
 		/*
 		*   store the position of the robot
 		*   into a vector
@@ -93,8 +103,6 @@ class PositionListener : public Listener
 		{
 			latest = ros::Time (0);
 			waitTime = ros::Duration (1);
-
-			initialize ();
 
 			position.x = transform.getOrigin ().x ();
 			position.y = transform.getOrigin ().y ();
@@ -113,7 +121,7 @@ class VoteListener : public Listener
 {
 	private:
 		std::string nodeName = "vote_listener";
-		std::vector <point> votedDetections;
+		std::vector <point> votes;
 		ros::Subscriber voteSubscriber;
 
 	protected:
@@ -142,7 +150,7 @@ class VoteListener : public Listener
 		*/
 		void voteCallback (const people_msgs::PositionMeasurementArray::ConstPtr & voteMessage)
 		{
-			votedDetections.clear ();
+			votes.clear ();
 
 			for (int index = 0; index < voteMessage -> people.size (); index += 1)
 			{
@@ -151,7 +159,7 @@ class VoteListener : public Listener
 				voted.x = voteMessage -> people [index].pos.x;
 				voted.y = voteMessage -> people [index].pos.y;
 
-				votedDetections.push_back (voted);
+				votes.push_back (voted);
 			}
 		}
 
@@ -161,9 +169,9 @@ class VoteListener : public Listener
 				initialize ();
 			}
 
-			std::vector <point> getVotedDetections ()
+			std::vector <point> getVotes ()
 			{
-				return votedDetections;
+				return votes;
 			}
 };
 

@@ -17,14 +17,11 @@
 class Behaviors
 {
 	protected:
-
+		PositionListener robotPosition;
 		point current;
 		point goal;
 		// whether or not the goal meets the requirements
 		bool ok = false;
-		PositionListener robotPosition;
-		VoteListener votes;
-		std::vector <point> people;
 
 		/*
 		* 	fills the message for action client
@@ -48,23 +45,12 @@ class Behaviors
 			return goalMessage;
 		}
 
-		/*
-		* 	updates current and people
-		*/
-		void update ()
-		{
-			current = robotPosition.getPosition ();
-			people = votes.getVotedDetections ();
-		}
-
 	public:
 		/*
 		*   find a goal that fits the behavior
 		*/
 		virtual point findGoal ()
 		{
-			update ();
-
 			return goal;
 		}
 
@@ -97,24 +83,23 @@ class Engaging : public Behaviors
 		/*
 		*   find a goal that fits the behavior
 		*/
-		point findGoal ()
+		point findGoal (std::vector <point> people)
 		{
 			// enable control of speed limit
 			MovementConfigurator movementLimiter;
 
 			// search for a goal
-			ROS_INFO_STREAM ("Engaging behavior...");
 			movementLimiter.setVelocityLimit ('x', 0.5);
 			ROS_DEBUG_STREAM ("Set velocity limit to 0.5 ...");
-			update ();
+			current = robotPosition.getPosition ();
 			int index = people.size ();
 
 			// while there is a person location to test and a valid goal has not been found
 			while (index > 0 && !ok)
 			{
 				// set a new goal halfway between the robot and a person
-				goal.x = (current.x + people [index].x) / 2;
-				goal.y = (current.y + people [index].y) / 2;
+				goal.x = current.x + (abs (current.x - people [index].x) / 2);
+				goal.y = current.y + (abs (current.y - people [index].y) / 2);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
 				// iterate through the people vector
@@ -144,26 +129,25 @@ class Conservative : public Behaviors
 		/*
 		*   find a goal that fits the behavior
 		*/
-		point findGoal ()
+		point findGoal (std::vector <point> people)
 		{
 			MovementConfigurator movementLimiter;
 
 			// search for a goal
-			ROS_INFO_STREAM ("Conservative behavior...");
 			movementLimiter.setVelocityLimit ('x', 0.33);
 			ROS_DEBUG_STREAM ("Set velocity limit to 0.33 ...");
-			update ();
+			current = robotPosition.getPosition ();
 			int index = people.size ();
 
 			// while a valid goal has not been found
 			while (index > 0 && !ok)
 			{
 				// set a new goal, todo: keep a larger distance from people
-				goal.x = (current.x + people [index].x) / 2;
-				goal.y = (current.y + people [index].y) / 2;
+				goal.x = current.x + (abs (current.x - people [index].x) / 4);
+				goal.y = current.y + (abs (current.y - people [index].y) / 4);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
-				// iterate through the people vector backwards (its sorted from least reliable to most)
+				// iterate through the people vector
 				index -= 1;
 			}
 
@@ -192,15 +176,13 @@ class Reserved : public Behaviors
 			MovementConfigurator movementLimiter;
 
 			// search for a goal
-			ROS_INFO_STREAM ("Reserved behavior...");
 			movementLimiter.setVelocityLimit ('x', 0.25);
 			ROS_DEBUG_STREAM ("Set velocity limit to 0.25 ...");
-			update ();
+			current = robotPosition.getPosition ();
 			// only go to predefined locations
 			int random = rand () % reserved.size ();
 
-			goal.x = reserved [random].x;
-			goal.y = reserved [random].y;
+			goal = reserved [random];
 			ok = navigationTools::checkGoal (current, goal);
 
 			// if goal has not been found
@@ -229,10 +211,9 @@ class Stationary : public Behaviors
 			MovementConfigurator movementLimiter;
 
 			// search for a goal
-			ROS_INFO_STREAM ("Stationary behavior...");
 			movementLimiter.setVelocityLimit ('x', 0.10);
 			ROS_DEBUG_STREAM ("Set velocity limit to 0.10 ...");
-			update ();
+			current = robotPosition.getPosition ();
 			// go to predefined stationary location
 			goal = stationary;
 			ROS_INFO_STREAM ("Checking goal ...");

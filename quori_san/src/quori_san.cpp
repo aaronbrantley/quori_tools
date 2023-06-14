@@ -21,22 +21,8 @@ int main (int argc, char ** argv)
 	* 	loop until ctrl-c is pressed or
 	* 	ros::shutdown is called
 	*/
-	while (ros::ok ())
+	while (sanNode.ok ())
 	{
-		/*
-		* 	room density
-		* 	0 = empty
-		* 	10 = crowded
-		*/
-		double density = 0;
-
-		/*
-		* 	room vulnerability
-		* 	0 = sociable
-		* 	10 = serious
-		*/
-		double vulnerability = 0;
-
 		point goal;
 		bool goalReached = false;
 
@@ -45,7 +31,7 @@ int main (int argc, char ** argv)
 		* 	vulnerability then attempt to go
 		* 	there
 		*/
-		goal = san::findBehaviorGoal (san::readRoom (density, vulnerability));
+		goal = san::findBehaviorGoal ();
 		goalReached = behavior.goToGoal ();
 
 		if (goalReached)
@@ -59,7 +45,7 @@ int main (int argc, char ** argv)
 		}
 
 		ros::spinOnce ();
-		loopRate.sleep();
+		loopRate.sleep ();
 	}
 
 	return 0;

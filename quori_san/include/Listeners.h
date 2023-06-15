@@ -9,57 +9,11 @@
 #include "point.h"
 
 /*
-*   generic listener node creation
-*/
-class Listener
-{
-	private:
-		std::string nodeName;
-		ros::Subscriber subscriber;
-
-	protected:
-		/*
-		* 	enables ros functionality
-		* 	creates listener node
-		* 	and subscribes to /topic
-		*/
-		void initialize ()
-		{
-			int argc = 0;
-			char ** argv = nullptr;
-
-			ros::init (argc, argv, nodeName);
-
-			ros::NodeHandle listener;
-			/* subscriber = listener.subscribe ("topic", 0, & Listener::callback, this); */
-
-			ROS_DEBUG_STREAM ("Initialized " << nodeName);
-		}
-
-		/*
-		* 	processes a message
-		* 	from /topic
-		*/
-		void callback (/* const <message type>::ConstPtr & message */)
-		{
-			/*
-			* 	do something with the message here
-			*/
-		}
-
-	public:
-		Listener ()
-		{
-			initialize ();
-		}
-};
-
-/*
 *   finds the position of the robot in the map
 *   from the transform between the robot frame
 *   and the map frame
 */
-class PositionListener : public Listener
+class PositionListener
 {
 	private:
 		point position;
@@ -117,7 +71,7 @@ class PositionListener : public Listener
 * 	listens to the messages
 * 	sent to the lidar_voting topic
 */
-class VoteListener : public Listener
+class VoteListener
 {
 	private:
 		std::string nodeName = "vote_listener";

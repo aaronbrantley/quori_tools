@@ -8,6 +8,14 @@ struct point
 {
 	float x;
 	float y;
+
+	point operator + (const point & other)
+	{
+		this -> x += other.x;
+		this -> y += other.y;
+
+		return * this;
+	}
 };
 
 #endif

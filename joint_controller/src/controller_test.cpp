@@ -10,7 +10,7 @@ int main (int argc, char ** argv)
 	float waistPitch = -0.4;
 	float shoulderPitch = -1.0;
 	float shoulderRoll = -2.0;
-	float increment = 0.0025;
+	float increment = 0.0005;
 	JointController controller;
 	ros::NodeHandle jointControllerNode;
 

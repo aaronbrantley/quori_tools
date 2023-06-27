@@ -1,5 +1,5 @@
-#ifndef IMAGE_PUBLISHER_
-#define IMAGE_PUBLISHER_
+#ifndef IMAGE_PUBLISHER_H_
+#define IMAGE_PUBLISHER_H_
 
 #include <dirent.h>
 

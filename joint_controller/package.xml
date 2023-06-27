@@ -1,0 +1,10 @@
+<?xml version = "1.0"?>
+<package format = "2">
+	<name> joint_controller </name>
+	<version> 0.0.2 </version>
+	<description> The joint_controller package </description>
+	<maintainer email = "aaronbrantley@nevada.unr.edu"> Aaron Brantley </maintainer>
+	<license> MIT </license>
+	<depend> roscpp </depend>
+	<buildtool_depend> catkin </buildtool_depend>
+</package>

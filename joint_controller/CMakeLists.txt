@@ -12,5 +12,7 @@ catkin_package()
 include_directories (include ${catkin_INCLUDE_DIRS})
 
 add_executable (controller_test src/controller_test.cpp)
+add_executable (gesture_test src/gesture_test.cpp)
 
 target_link_libraries (controller_test ${catkin_LIBRARIES})
+target_link_libraries (gesture_test ${catkin_LIBRARIES})

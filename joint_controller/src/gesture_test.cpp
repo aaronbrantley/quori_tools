@@ -8,8 +8,10 @@ int main (int argc, char ** argv)
 
 	while (jointControllerNode.ok ())
 	{
-		WaveRightArm waveRight;
+		Wave waveLeft;
+		Wave waveRight (false);
 
+		waveLeft.perform ();
 		waveRight.perform ();
 	}
 

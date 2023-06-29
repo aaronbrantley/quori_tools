@@ -37,7 +37,7 @@ class Gesture
 		}
 };
 
-class WaveRightArm : public Gesture
+class Wave : public Gesture
 {
 private:
 	joint_values raiseArm;
@@ -46,22 +46,67 @@ private:
 	joint_values lowerArm;
 
 public:
-	WaveRightArm ()
+
+	/*
+	* 	waves the left arm
+	*/
+	Wave ()
 	{
-		raiseArm.rightShoulderPitch = -0.25;
-		raiseArm.rightShoulderRoll = 1.0;
+		raiseArm.leftShoulderPitch = -0.25;
+		raiseArm.leftShoulderRoll = 1.0;
+		waveArm.leftShoulderPitch = -0.25;
+		waveArm.leftShoulderRoll = 0.75;;
+		waveArmBack.leftShoulderPitch = -0.25;
+		waveArmBack.leftShoulderRoll = 1.0;
+		lowerArm.leftShoulderPitch = -2.3;
+		lowerArm.leftShoulderRoll = 1.0;
+
 		raiseArm.speed = 1.0;
-
-		waveArm.rightShoulderPitch = -0.25;
-		waveArm.rightShoulderRoll = 0.75;
 		waveArm.speed = 0.25;
-
-		waveArmBack.rightShoulderPitch = -0.25;
-		waveArmBack.rightShoulderRoll = 1.0;
 		waveArmBack.speed = 0.25;
+		lowerArm.speed = 1.0;
 
-		lowerArm.rightShoulderPitch = -2.3;
-		lowerArm.rightShoulderRoll = 1.0;
+		addPose (raiseArm);
+		addPose (waveArm);
+		addPose (waveArmBack);
+		addPose (waveArm);
+		addPose (waveArmBack);
+		addPose (lowerArm);
+	}
+
+	/*
+	* 	choose which arm to wave
+	* 	true for left arm
+	* 	false for right arm
+	*/
+	Wave (bool arm)
+	{
+		if (arm)
+		{
+			raiseArm.leftShoulderPitch = -0.25;
+			raiseArm.leftShoulderRoll = 1.0;
+			waveArm.leftShoulderPitch = -0.25;
+			waveArm.leftShoulderRoll = 0.75;
+			waveArmBack.leftShoulderPitch = -0.25;
+			waveArmBack.leftShoulderRoll = 1.0;
+			lowerArm.leftShoulderPitch = -2.3;
+			lowerArm.leftShoulderRoll = 1.0;
+		}
+		else
+		{
+			raiseArm.rightShoulderPitch = -0.25;
+			raiseArm.rightShoulderRoll = 1.0;
+			waveArm.rightShoulderPitch = -0.25;
+			waveArm.rightShoulderRoll = 0.75;
+			waveArmBack.rightShoulderPitch = -0.25;
+			waveArmBack.rightShoulderRoll = 1.0;
+			lowerArm.rightShoulderPitch = -2.3;
+			lowerArm.rightShoulderRoll = 1.0;
+		}
+
+		raiseArm.speed = 1.0;
+		waveArm.speed = 0.25;
+		waveArmBack.speed = 0.25;
 		lowerArm.speed = 1.0;
 
 		addPose (raiseArm);

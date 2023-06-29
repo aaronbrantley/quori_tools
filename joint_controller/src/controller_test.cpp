@@ -1,5 +1,9 @@
 #include "JointController.h"
 
+/*
+* 	test the joint controller
+* 	each joint goes through most of its possible values
+*/
 int main (int argc, char ** argv)
 {
 	ros::init (argc, argv, "joint_controller");
@@ -9,7 +13,7 @@ int main (int argc, char ** argv)
 	bool incrementShoulderRoll = true;
 	float waistPitch = -0.4;
 	float shoulderPitch = -1.0;
-	float shoulderRoll = -2.0;
+	float shoulderRoll = -2.3;
 	float increment = 0.0005;
 	JointController controller;
 	ros::NodeHandle jointControllerNode;
@@ -37,7 +41,7 @@ int main (int argc, char ** argv)
 			incrementShoulderPitch = !incrementShoulderPitch;
 		}
 
-		if (abs (shoulderRoll) > 2.0)
+		if (abs (shoulderRoll) > 2.3)
 		{
 			incrementShoulderRoll = !incrementShoulderRoll;
 		}

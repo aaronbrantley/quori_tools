@@ -8,19 +8,27 @@
 
 #include "joint_values.h"
 
+// from http://library.isr.ist.utl.pt/docs/roswiki/pr2_controllers(2f)Tutorials(2f)Moving(20)the(20)arm(20)using(20)the(20)Joint(20)Trajectory(20)Action.html#Creating_the_node
 typedef actionlib::SimpleActionClient <control_msgs::FollowJointTrajectoryAction> actionClient;
 
 /*
-* 	from http://library.isr.ist.utl.pt/docs/roswiki/pr2_controllers(2f)Tutorials(2f)Moving(20)the(20)arm(20)using(20)the(20)Joint(20)Trajectory(20)Action.html#Creating_the_node
+* 	sends a goal to quori's joint controller
 */
 class JointController
 {
 	private:
+		// the list of quori's controllable joints
 		std::vector <std::string> joint_names;
+		// the values associated with each joint
 		joint_values values;
+		// action client for sending goals to the controller
 		actionClient * client;
 
 	protected:
+		/*
+		* 	send a goal to the controllers
+		* 	given the current joint values
+		*/
 		void sendCommand ()
 		{
 			trajectory_msgs::JointTrajectoryPoint point;
@@ -45,6 +53,9 @@ class JointController
 			client -> sendGoal (goal);
 		}
 
+		/*
+		* 	adjust the transition speed for the joint controller
+		*/
 		void sendCommand (float speed)
 		{
 			trajectory_msgs::JointTrajectoryPoint point;
@@ -70,6 +81,11 @@ class JointController
 		}
 
 	public:
+		/*
+		* 	default constructor
+		* 	startup action client
+		* 	assign joint names
+		*/
 		JointController ()
 		{
 			client = new actionClient ("quori/joint_trajectory_controller/follow_joint_trajectory");
@@ -107,6 +123,10 @@ class JointController
 			values.waistPitch = value;
 		}
 
+		/*
+		* 	send a goal to the action server
+		* 	and wait for the controller to finish
+		*/
 		actionlib::SimpleClientGoalState createGoal ()
 		{
 			sendCommand ();
@@ -119,6 +139,9 @@ class JointController
 			return client -> getState ();
 		}
 
+		/*
+		* 	adjust the transition speed for the joint controller
+		*/
 		actionlib::SimpleClientGoalState createGoal (float speed)
 		{
 			sendCommand (speed);

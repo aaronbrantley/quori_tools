@@ -3,6 +3,7 @@
 
 struct joint_values
 {
+	// the names of quori's controllable joints
 	std::vector <std::string> jointNames = {"l_shoulder_pitch", "l_shoulder_roll", "r_shoulder_pitch", "r_shoulder_roll", "waist_pitch"};
 	// maybe get current joint values instead of resetting to 0?
 	// or maybe joints will keep their position if the goal has an empty value for them?
@@ -11,6 +12,7 @@ struct joint_values
 	float rightShoulderPitch = 0.0;
 	float rightShoulderRoll = 0.0;
 	float waistPitch = 0.0;
+	// how quickly this pose should be performed
 	float speed = 1.0;
 };
 

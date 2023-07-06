@@ -8,9 +8,6 @@
 	<!-- navigation -->
 	<include file="$(find quori_nav)/launch/move_base.launch"/>
 
-	<!-- lidar -->
-	<include file="$(find quori_launch)/launch/filtered_laser.launch"/>
-
 	<!-- localization -->
 	<include file="$(find amcl)/examples/amcl_omni.launch"/>
 

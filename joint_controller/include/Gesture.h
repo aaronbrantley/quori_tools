@@ -160,4 +160,98 @@ class Wave : public Gesture
 		}
 };
 
+class Point : public Gesture
+{
+	private:
+		joint_values point;
+		joint_values lower;
+
+	public:
+		/*
+		* 	point with the left arm
+		*/
+		Point ()
+		{
+			point.leftShoulderPitch = 2.0;
+			point.leftShoulderRoll = -1.0;
+			point.rightShoulderPitch = -0.5;
+			point.rightShoulderRoll = -1.0;
+			lower.leftShoulderRoll = -1.0;
+			lower.rightShoulderRoll = -1.0;
+
+			addPose (point);
+			addPose (lower);
+		}
+
+		/*
+		* 	choose which arm to point with
+		*/
+		Point (bool arm)
+		{
+			// left
+			if (arm)
+			{
+				point.leftShoulderPitch = 2.0;
+				point.leftShoulderRoll = -1.0;
+				point.rightShoulderPitch = -0.5;
+				point.rightShoulderRoll = -1.0;
+			}
+			// right
+			else
+			{
+				point.rightShoulderPitch = 2.0;
+				point.rightShoulderRoll = -1.0;
+				point.leftShoulderPitch = -0.5;
+				point.leftShoulderRoll = -1.0;
+			}
+
+			lower.leftShoulderRoll = -1.0;
+			lower.rightShoulderRoll = -1.0;
+
+			addPose (point);
+			addPose (lower);
+		}
+};
+
+class DirectAttention : public Gesture
+{
+	private:
+		joint_values one;
+		joint_values two;
+		joint_values three;
+		joint_values four;
+
+	public:
+		DirectAttention ()
+		{
+			one.leftShoulderPitch = 1.0;
+			one.leftShoulderRoll = -1.0;
+			one.rightShoulderPitch = -0.1;
+			one.rightShoulderRoll = 1.0;
+			two.leftShoulderPitch = 2.25;
+			two.leftShoulderRoll = -1.0;
+			two.rightShoulderPitch = -1.0;
+			two.rightShoulderRoll = 0.75;
+			two.waistPitch -0.25;
+			three.leftShoulderPitch = 1.5;
+			three.leftShoulderRoll = -0.25;
+			three.rightShoulderPitch = -0.5;
+			three.rightShoulderRoll = 1.0;
+			four.leftShoulderPitch = 2.25;
+			four.leftShoulderRoll = 0.333;
+			four.rightShoulderPitch = -1.5;
+			four.rightShoulderRoll = 1.0;
+			four.waistPitch = 0.05;
+
+			two.speed = 0.5;
+			three.speed = 0.5;
+			four.speed = 0.25;
+
+			addPose (one);
+			addPose (two);
+			addPose (three);
+			addPose (four);
+		}
+};
+
 #endif

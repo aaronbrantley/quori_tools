@@ -16,6 +16,38 @@ struct point
 
 		return * this;
 	}
+
+	point operator - (const point & other)
+	{
+		this -> x -= other.x;
+		this -> y -= other.y;
+
+		return * this;
+	}
+
+	point operator * (const point & other)
+	{
+		this -> x *= other.x;
+		this -> y *= other.y;
+
+		return * this;
+	}
+
+	point operator / (const point & other)
+	{
+		this -> x /= other.x;
+		this -> y /= other.y;
+
+		return * this;
+	}
+
+	point operator / (const float & other)
+	{
+		this -> x /= other;
+		this -> y /= other;
+
+		return * this;
+	}
 };
 
 #endif

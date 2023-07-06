@@ -10,9 +10,15 @@ int main (int argc, char ** argv)
 	{
 		Wave waveLeft;
 		Wave waveRight (false);
+		Point pointLeft;
+		Point pointRight (false);
+		//DirectAttention direct;
 
 		waveLeft.perform ();
 		waveRight.perform ();
+		pointLeft.perform ();
+		pointRight.perform ();
+		//direct.perform ();
 	}
 
 	return 0;

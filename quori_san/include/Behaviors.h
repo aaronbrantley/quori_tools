@@ -98,8 +98,7 @@ class Engaging : public Behaviors
 			while (index > 0 && !ok)
 			{
 				// set a new goal halfway between the robot and a person
-				goal.x = current.x + (abs (current.x - people [index].x) / 2);
-				goal.y = current.y + (abs (current.y - people [index].y) / 2);
+				goal = current + ((people [index] - current) / 2.0);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
 				// iterate through the people vector
@@ -143,8 +142,7 @@ class Conservative : public Behaviors
 			while (index > 0 && !ok)
 			{
 				// set a new goal, todo: keep a larger distance from people
-				goal.x = current.x + (abs (current.x - people [index].x) / 4);
-				goal.y = current.y + (abs (current.y - people [index].y) / 4);
+				goal = current + ((people [index] - current) / 4.0);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
 				// iterate through the people vector
@@ -173,6 +171,11 @@ class Reserved : public Behaviors
 		*/
 		point findGoal ()
 		{
+			point reservedPoint;
+			reservedPoint.x = 0.0;
+			reservedPoint.y = 0.0;
+			reserved.push_back (reservedPoint);
+
 			MovementConfigurator movementLimiter;
 
 			// search for a goal
@@ -208,6 +211,9 @@ class Stationary : public Behaviors
 		*/
 		point findGoal ()
 		{
+			stationary.x = 0.0;
+			stationary.y = 0.0;
+
 			MovementConfigurator movementLimiter;
 
 			// search for a goal

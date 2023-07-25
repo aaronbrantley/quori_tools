@@ -236,4 +236,12 @@ class Stationary : public Behaviors
 		}
 };
 
+class Welcoming : public Behaviors
+{
+	private:
+		
+	public:
+
+};
+
 #endif

@@ -49,6 +49,7 @@ class PositionListener
 		{
 				initialize ();
 		}
+		
 		/*
 		*   store the position of the robot
 		*   into a vector

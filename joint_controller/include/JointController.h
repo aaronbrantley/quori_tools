@@ -127,7 +127,7 @@ class JointController
 		* 	send a goal to the action server
 		* 	and wait for the controller to finish
 		*/
-		actionlib::SimpleClientGoalState createGoal ()
+		bool createGoal ()
 		{
 			sendCommand ();
 
@@ -136,13 +136,13 @@ class JointController
 				continue;
 			}
 
-			return client -> getState ();
+			return client -> getState () == actionlib::SimpleClientGoalState::SUCCEEDED;
 		}
 
 		/*
 		* 	adjust the transition speed for the joint controller
 		*/
-		actionlib::SimpleClientGoalState createGoal (float speed)
+		bool createGoal (float speed)
 		{
 			sendCommand (speed);
 
@@ -151,7 +151,7 @@ class JointController
 				continue;
 			}
 
-			return client -> getState ();
+			return client -> getState () == actionlib::SimpleClientGoalState::SUCCEEDED;
 		}
 };
 

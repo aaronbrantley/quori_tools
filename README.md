@@ -1,8 +1,5 @@
 # quori_tools
-Programs that will make working with Quori easier
-
-## base_2dnav
-Handles Quori's navigation
+Packages that will make working with Quori easier
 
 ## face_image
 Takes `.png` files and displays them on Quori's face projector
@@ -12,3 +9,6 @@ Sends goals to Quori's joint controller. Has support for gesture creation, which
 
 ## microphone_direction
 Gets the latest detected sound and performs tasks based on its direction
+
+## quori_san
+2D navigation nodes for socially-aware navigation with Quori

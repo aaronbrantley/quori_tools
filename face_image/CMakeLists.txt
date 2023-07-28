@@ -14,6 +14,8 @@ include_directories (include ${catkin_INCLUDE_DIRS})
 
 add_executable (face_test src/face_test.cpp)
 add_executable (expressions src/expressions.cpp)
+add_executable (eyes_direction_test src/eyes_direction_test.cpp)
 
 target_link_libraries (face_test ${catkin_LIBRARIES})
 target_link_libraries (expressions ${catkin_LIBRARIES})
+target_link_libraries (eyes_direction_test ${catkin_LIBRARIES})

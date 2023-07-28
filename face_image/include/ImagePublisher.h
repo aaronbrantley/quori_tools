@@ -137,7 +137,6 @@ class ImagePublisher : public Publisher
 
       initialize ();
       ros::NodeHandle imageNode;
-      ros::Rate loopRate (5);
 
       // image transport constructor implicit call doesnt work
       image_transport::ImageTransport imageTransport (imageNode);
@@ -152,15 +151,8 @@ class ImagePublisher : public Publisher
       imageReader.toImageMsg (rosImage);
 
       publisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1);
-
-      // quori face application does not like latched publishing
-      while (imageNode.ok ())
-      {
-        // publish image to topic
-        publisher.publish (rosImage);
-
-        loopRate.sleep ();
-      }
+      // publish image to topic
+      publisher.publish (rosImage);
     }
 
     /*

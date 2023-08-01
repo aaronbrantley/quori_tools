@@ -150,7 +150,7 @@ class ImagePublisher : public Publisher
       imageReader.encoding = "bgr8";
       imageReader.toImageMsg (rosImage);
 
-      publisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1);
+      publisher = imageNode.advertise <sensor_msgs::Image> (publishTopic, 1, true);
       // publish image to topic
       publisher.publish (rosImage);
     }

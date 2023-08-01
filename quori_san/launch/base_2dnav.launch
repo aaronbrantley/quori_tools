@@ -5,6 +5,9 @@
 	<!-- robot -->
 	<include file="$(find quori_launch)/launch/robot.launch"/>
 
+	<!-- laser -->
+	<include file="$(find quori_launch)/launch/filtered_laser.launch"/>
+
 	<!-- navigation -->
 	<include file="$(find quori_nav)/launch/move_base.launch"/>
 

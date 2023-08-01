@@ -18,8 +18,8 @@ class PositionListener
 	private:
 		point position;
 		tf::StampedTransform transform;
-		ros::Time latest;
-		ros::Duration waitTime;
+		ros::Time latest = ros::Time (0);
+		ros::Duration waitTime = ros::Duration (1.0);
 
 		std::string nodeName = "position_listener";
 		std::string mapFrame = "map";
@@ -49,16 +49,13 @@ class PositionListener
 		{
 				initialize ();
 		}
-		
+
 		/*
 		*   store the position of the robot
 		*   into a vector
 		*/
 		point getPosition ()
 		{
-			latest = ros::Time (0);
-			waitTime = ros::Duration (1);
-
 			position.x = transform.getOrigin ().x ();
 			position.y = transform.getOrigin ().y ();
 

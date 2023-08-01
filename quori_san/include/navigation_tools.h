@@ -21,16 +21,13 @@ namespace navigationTools
 		// set coordinates for starting position
 		request.start.pose.position.x = start.x;
 		request.start.pose.position.y = start.y;
-		request.start.pose.orientation.w = 0.0;
+		request.start.pose.orientation.w = 1.0;
 		// set frame for ending position
 		request.goal.header.frame_id = "map";
 		// set coordinates for ending position
 		request.goal.pose.position.x = end.x;
 		request.goal.pose.position.y = end.y;
-		request.goal.pose.orientation.w = 0.0;
-		// from getplan service documentaion:
-		// If the goal is obstructed, how many meters the planner can relax the constraint in x and y before failing.
-		request.tolerance = 0.0;
+		request.goal.pose.orientation.w = 1.0;
 
 		return request;
 	}
@@ -67,7 +64,7 @@ namespace navigationTools
 		nav_msgs::GetPlan planMessage;
 
 		// fill in the request for make_plan service
-		createRequest (current, goal);
+		planMessage.request = createRequest (current, goal);
 
 		// if make_plan cannot find a plan
 		if (!callPlanningService (planClient, planMessage))

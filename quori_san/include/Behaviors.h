@@ -36,11 +36,11 @@ class Behaviors
 			// set goal coordinates
 			goalMessage.target_pose.pose.position.x =  goal.x;
 			goalMessage.target_pose.pose.position.y =  goal.y;
-			goalMessage.target_pose.pose.position.z =  0.0;
-			goalMessage.target_pose.pose.orientation.x = 0.0;
-			goalMessage.target_pose.pose.orientation.y = 0.0;
-			goalMessage.target_pose.pose.orientation.z = 0.0;
-			goalMessage.target_pose.pose.orientation.w = 0.0;
+			//goalMessage.target_pose.pose.position.z =  0.0;
+			//goalMessage.target_pose.pose.orientation.x = 0.0;
+			//goalMessage.target_pose.pose.orientation.y = 0.0;
+			//goalMessage.target_pose.pose.orientation.z = 0.0;
+			goalMessage.target_pose.pose.orientation.w = 1.0;
 
 			return goalMessage;
 		}
@@ -94,6 +94,8 @@ class Engaging : public Behaviors
 			current = robotPosition.getPosition ();
 			int index = people.size ();
 
+			ROS_INFO ("Looking for goal ...");
+
 			// while there is a person location to test and a valid goal has not been found
 			while (index > 0 && !ok)
 			{
@@ -112,8 +114,8 @@ class Engaging : public Behaviors
 			{
 				ROS_DEBUG_STREAM ("Could not find person to interact with, falling back to wandering...");
 				// set a goal at a random location relative to the robot's current location
-				goal.x = current.x + (rand () % 100 - 50) / 10;
-				goal.y = current.y + (rand () % 100 - 50) / 10;
+				goal.x = current.x + (rand () % 5);
+				goal.y = current.y + (rand () % 5);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
 			}
@@ -137,6 +139,8 @@ class Conservative : public Behaviors
 			ROS_DEBUG_STREAM ("Set velocity limit to 0.33 ...");
 			current = robotPosition.getPosition ();
 			int index = people.size ();
+
+			ROS_INFO ("Looking for goal ...");
 
 			// while a valid goal has not been found
 			while (index > 0 && !ok)
@@ -185,6 +189,8 @@ class Reserved : public Behaviors
 			// only go to predefined locations
 			int random = rand () % reserved.size ();
 
+			ROS_INFO ("Looking for goal ...");
+
 			goal = reserved [random];
 			ok = navigationTools::checkGoal (current, goal);
 
@@ -220,6 +226,9 @@ class Stationary : public Behaviors
 			movementLimiter.setVelocityLimit ('x', 0.10);
 			ROS_DEBUG_STREAM ("Set velocity limit to 0.10 ...");
 			current = robotPosition.getPosition ();
+
+			ROS_INFO ("Looking for goal ...");
+
 			// go to predefined stationary location
 			goal = stationary;
 			ROS_INFO_STREAM ("Checking goal ...");
@@ -239,7 +248,7 @@ class Stationary : public Behaviors
 class Welcoming : public Behaviors
 {
 	private:
-		
+
 	public:
 
 };

@@ -18,8 +18,8 @@ class Behaviors
 {
 	protected:
 		PositionListener robotPosition;
-		point current;
-		point goal;
+		voting::Point current;
+		voting::Point goal;
 		// whether or not the goal meets the requirements
 		bool ok = false;
 
@@ -49,7 +49,7 @@ class Behaviors
 		/*
 		*   find a goal that fits the behavior
 		*/
-		virtual point findGoal ()
+		virtual voting::Point findGoal ()
 		{
 			return goal;
 		}
@@ -83,7 +83,7 @@ class Engaging : public Behaviors
 		/*
 		*   find a goal that fits the behavior
 		*/
-		point findGoal (std::vector <point> people)
+		voting::Point findGoal (std::vector <voting::Point> people)
 		{
 			// enable control of speed limit
 			MovementConfigurator movementLimiter;
@@ -100,7 +100,8 @@ class Engaging : public Behaviors
 			while (index > 0 && !ok)
 			{
 				// set a new goal halfway between the robot and a person
-				goal = current + ((people [index] - current) / 2.0);
+				goal.x = current.x + ((people [index].x - current.x) / 2.0);
+				goal.y = current.y + ((people [index].y - current.y) / 2.0);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
 				// iterate through the people vector
@@ -112,7 +113,7 @@ class Engaging : public Behaviors
 			// while a valid goal has not been found
 			while (!ok)
 			{
-				ROS_DEBUG_STREAM ("Could not find person to interact with, falling back to wandering...");
+				ROS_INFO_STREAM ("Could not find person to interact with, falling back to wandering...");
 				// set a goal at a random location relative to the robot's current location
 				goal.x = current.x + (rand () % 5);
 				goal.y = current.y + (rand () % 5);
@@ -130,7 +131,7 @@ class Conservative : public Behaviors
 		/*
 		*   find a goal that fits the behavior
 		*/
-		point findGoal (std::vector <point> people)
+		voting::Point findGoal (std::vector <voting::Point> people)
 		{
 			MovementConfigurator movementLimiter;
 
@@ -146,7 +147,8 @@ class Conservative : public Behaviors
 			while (index > 0 && !ok)
 			{
 				// set a new goal, todo: keep a larger distance from people
-				goal = current + ((people [index] - current) / 4.0);
+				goal.x = current.x + ((people [index].x - current.x) / 4.0);
+				goal.y = current.y + ((people [index].y - current.y) / 4.0);
 				// test the goal
 				ok = navigationTools::checkGoal (current, goal);
 				// iterate through the people vector
@@ -167,15 +169,15 @@ class Conservative : public Behaviors
 class Reserved : public Behaviors
 {
 	private:
-		std::vector <point> reserved;
+		std::vector <voting::Point> reserved;
 
 	public:
 		/*
 		*   find a goal that fits the behavior
 		*/
-		point findGoal ()
+		voting::Point findGoal ()
 		{
-			point reservedPoint;
+			voting::Point reservedPoint;
 			reservedPoint.x = 0.0;
 			reservedPoint.y = 0.0;
 			reserved.push_back (reservedPoint);
@@ -209,13 +211,13 @@ class Stationary : public Behaviors
 {
 	private:
 		// the "kiosk" location for the robot to stay in during stationary behavior
-		point stationary;
+		voting::Point stationary;
 
 	public:
 		/*
 		*   find a goal that fits the behavior
 		*/
-		point findGoal ()
+		voting::Point findGoal ()
 		{
 			stationary.x = 0.0;
 			stationary.y = 0.0;

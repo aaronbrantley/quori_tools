@@ -6,7 +6,7 @@
 #include <tf/transform_listener.h>
 #include <people_msgs/PositionMeasurementArray.h>
 
-#include "point.h"
+#include "voting/Density.h"
 
 /*
 *   finds the position of the robot in the map
@@ -16,7 +16,7 @@
 class PositionListener
 {
 	private:
-		point position;
+		voting::Point position;
 		tf::StampedTransform transform;
 		ros::Time latest = ros::Time (0);
 		ros::Duration waitTime = ros::Duration (1.0);
@@ -54,7 +54,7 @@ class PositionListener
 		*   store the position of the robot
 		*   into a vector
 		*/
-		point getPosition ()
+		voting::Point getPosition ()
 		{
 			position.x = transform.getOrigin ().x ();
 			position.y = transform.getOrigin ().y ();
@@ -69,11 +69,13 @@ class PositionListener
 * 	listens to the messages
 * 	sent to the lidar_voting topic
 */
-class VoteListener
+class DensityListener
 {
 	private:
-		std::string nodeName = "vote_listener";
-		std::vector <point> votes;
+		std::string nodeName = "density_listener";
+		int current;
+		float average;
+		std::vector <voting::Point> locations;
 		ros::Subscriber voteSubscriber;
 
 	protected:
@@ -89,8 +91,8 @@ class VoteListener
 
 			ros::init (argc, argv, nodeName);
 
-			ros::NodeHandle voteListener;
-			voteSubscriber = voteListener.subscribe ("people_voting", 0, & VoteListener::voteCallback, this);
+			ros::NodeHandle densityListener;
+			voteSubscriber = densityListener.subscribe ("density", 10, & DensityListener::densityCallback, this);
 
 			ROS_DEBUG_STREAM ("Initialized " << nodeName);
 		}
@@ -100,30 +102,43 @@ class VoteListener
 		* 	puts detection data into the point struct
 		* 	add each detection to the detections vector
 		*/
-		void voteCallback (const people_msgs::PositionMeasurementArray::ConstPtr & voteMessage)
+		void densityCallback (const voting::Density::ConstPtr & densityMessage)
 		{
-			votes.clear ();
+			current = densityMessage -> current;
+			average = densityMessage -> average;
 
-			for (int index = 0; index < voteMessage -> people.size (); index += 1)
+			locations.clear ();
+
+			for (int index = 0; index < densityMessage -> current; index += 1)
 			{
-				point voted;
+				voting::Point location;
 
-				voted.x = voteMessage -> people [index].pos.x;
-				voted.y = voteMessage -> people [index].pos.y;
+				location.x = densityMessage -> locations [index].x;
+				location.y = densityMessage -> locations [index].y;
 
-				votes.push_back (voted);
+				locations.push_back (location);
 			}
 		}
 
 		public:
-			VoteListener ()
+			DensityListener ()
 			{
 				initialize ();
 			}
 
-			std::vector <point> getVotes ()
+			int getCurrent ()
 			{
-				return votes;
+				return current;
+			}
+
+			float getAverage ()
+			{
+				return average;
+			}
+
+			std::vector <voting::Point> getLocations ()
+			{
+				return locations;
 			}
 };
 

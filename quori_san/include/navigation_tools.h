@@ -4,14 +4,14 @@
 #include <nav_msgs/GetPlan.h>
 #include <move_base_msgs/MoveBaseAction.h>
 
-#include "point.h"
+#include "voting/Point.h"
 
 namespace navigationTools
 {
 	/*
 	*   https://www.programmersought.com/article/85495009501/
 	*/
-	nav_msgs::GetPlan::Request createRequest (point start, point end)
+	nav_msgs::GetPlan::Request createRequest (voting::Point start, voting::Point end)
 	{
 		// create the request message
 		nav_msgs::GetPlan::Request request;
@@ -57,7 +57,7 @@ namespace navigationTools
 	/*
 	*   check if the goal will fit the behavior
 	*/
-	bool checkGoal (point current, point goal)
+	bool checkGoal (voting::Point current, voting::Point goal)
 	{
 		ros::NodeHandle goalCheck;
 		ros::ServiceClient planClient = goalCheck.serviceClient <nav_msgs::GetPlan> ("move_base_node/make_plan", true);

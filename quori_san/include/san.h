@@ -5,23 +5,21 @@
 
 namespace san
 {
-	VoteListener votes;
-	int density = 0;
+	DensityListener density;
 	int vulnerability = 0;
 	int densityMidpoint = 5;
 	int vulnerabilityMidpoint = 5;
 
-	point findBehaviorGoal ()
+	voting::Point findBehaviorGoal ()
 	{
-		std::vector <point> people = votes.getVotes ();
-		density = people.size ();
+		std::vector <voting::Point> people = density.getLocations ();
 		// set vulnerability to context detection value (apriltag)
 		vulnerability = 0;
 
 		if (vulnerability < vulnerabilityMidpoint)
 		{
 			// low vulnerability;
-			if (density < densityMidpoint)
+			if (density.getAverage () < densityMidpoint)
 			{
 				// low density
 				ROS_INFO ("Engaging behavior...");
@@ -38,7 +36,7 @@ namespace san
 		}
 
 		// high vulnerability
-		if (density < densityMidpoint)
+		if (density.getAverage () < densityMidpoint)
 		{
 			// low density
 			ROS_INFO ("Reserved behavior...");

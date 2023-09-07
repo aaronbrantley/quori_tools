@@ -23,7 +23,7 @@ int main (int argc, char ** argv)
 	*/
 	while (sanNode.ok ())
 	{
-		point goal;
+		voting::Point goal;
 		bool goalReached = false;
 
 		/*
